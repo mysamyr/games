@@ -1,0 +1,21 @@
+{
+  "name": "mysamyr-games",
+  "version": "1.0.0",
+  "author": "Mysamyr",
+  "license": "ISC",
+  "description": "Games made by Mysamyr in pure js",
+  "scripts": {
+    "format": "prettier --write ./projects",
+    "check-quality": "eslint ./projects",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.2.0",
+    "@eslint/js": "^9.15.0",
+    "eslint": "^9.15.0",
+    "eslint-config-prettier": "^9.1.0",
+    "globals": "^15.12.0",
+    "husky": "^9.1.7",
+    "prettier": "^3.4.1"
+  }
+}

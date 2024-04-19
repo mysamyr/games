@@ -1,0 +1,103 @@
+:root {
+  --bg: #7c7c7c;
+  --bg-cell: #f2f2f2;
+  --btn-color: cornflowerblue;
+  --black: #000;
+  --cell: #ccc;
+  --mine: red;
+  --revealed: #eee;
+  --flag: #ff0;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  height: 100vh;
+  background-color: var(--bg);
+  font-family: Arial, Helvetica, sans-serif;
+  user-select: none;
+}
+
+header {
+  position: fixed;
+  top: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  height: 10vh;
+  width: 100vw;
+  background-color: var(--cell);
+}
+
+main {
+  margin: 0 auto;
+}
+
+.welcome {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  max-width: 90vw;
+  height: 30vh;
+  padding: 10px;
+  background-color: var(--bg-cell);
+  border-radius: 10px;
+}
+
+.diff-select {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.btn {
+  border: none;
+  border-radius: 5px;
+  list-style: none;
+  background-color: var(--btn-color);
+  color: var(--black);
+  padding: 5px 10px;
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+#gameBoard {
+  display: grid;
+  gap: 2px;
+  margin: 0 20px;
+}
+
+.cell {
+  width: 30px;
+  height: 30px;
+  background-color: var(--cell);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.cell.mine {
+  background-color: var(--mine);
+}
+
+.cell.revealed {
+  background-color: var(--revealed);
+}
+
+.cell.flag {
+  background-color: var(--flag);
+}
+
+.header-text {
+  font-size: 20px;
+}

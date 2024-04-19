@@ -1,0 +1,15 @@
+/.idea
+/.vscode
+
+/node_modules
+
+/.husky
+/assets
+
+.gitignore
+.eslint.config.js
+.prettierignore
+.prettierrc
+
+**/*.ico
+package-lock.json
