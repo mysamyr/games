@@ -1,0 +1,12 @@
+/.idea
+/.vscode
+/.husky
+/assets
+package-lock.json
+
+.gitignore
+.prettierignore
+.prettierrc
+
+/node_modules
+/projects/*/node_modules
