@@ -10,7 +10,7 @@ let snakeY = 5;
 let velocityX = 0;
 let velocityY = 0;
 let snakeBody = [];
-let setIntervalId;
+let intervalId;
 let score = 0;
 
 // Get high score from local storage
@@ -24,7 +24,7 @@ const updateFoodPosition = () => {
 };
 
 const handleGameOver = () => {
-  clearInterval(setIntervalId);
+  clearInterval(intervalId);
   alert('Game Over! Press OK to replay...');
   location.reload();
 };
@@ -53,7 +53,7 @@ controls.forEach(button =>
   )
 );
 
-const initGame = () => {
+const tick = () => {
   if (gameOver) return handleGameOver();
   let html = `<div class="food" style="grid-area: ${foodY} / ${foodX}"></div>`;
 
@@ -67,6 +67,13 @@ const initGame = () => {
     localStorage.setItem('high-score', highScore);
     scoreElement.innerText = `Score: ${score}`;
     highScoreElement.innerText = `High Score: ${highScore}`;
+
+    // make game faster every 5 points (until
+    if (score % 5) {
+      clearInterval(intervalId);
+      const timeout = 200 - Math.trunc(score / 5) * 20;
+      intervalId = setInterval(tick, timeout > 60 ? timeout : 60);
+    }
   }
 
   // Update Snake Head
@@ -101,5 +108,5 @@ const initGame = () => {
 };
 
 updateFoodPosition();
-setIntervalId = setInterval(initGame, 100);
+intervalId = setInterval(tick, 200);
 document.addEventListener('keyup', changeDirection);

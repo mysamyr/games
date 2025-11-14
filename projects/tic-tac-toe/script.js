@@ -1,4 +1,4 @@
-import { PLAYERS, winConditions } from './util';
+import { PLAYERS, winConditions } from './util.js';
 
 const cells = document.querySelectorAll('.cell');
 const statusText = document.querySelector('#statusText');

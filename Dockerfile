@@ -1,4 +1,4 @@
-FROM nginx:alpine AS prod
+FROM nginx:alpine
 
 WORKDIR /usr/share/nginx/html
 

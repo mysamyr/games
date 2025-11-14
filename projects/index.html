@@ -2,15 +2,62 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Games list</title>
+    <title>My Combined Site</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f6f6f6;
+        padding: 40px;
+      }
+
+      h1 {
+        margin-bottom: 20px;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+        display: grid;
+        grid-template-columns: auto auto auto;
+      }
+
+      li {
+        margin: 22px 0;
+      }
+
+      a {
+        text-decoration: none;
+        padding: 10px 16px;
+        background: #0078ff;
+        color: white;
+        border-radius: 6px;
+      }
+
+      a:hover {
+        background: #005fcc;
+      }
+    </style>
   </head>
   <body>
-    <h1>Games list</h1>
-    <ul>
-      <li><a href="/minesweeper">Minesweeper</a></li>
-      <li><a href="/snake">Snake</a></li>
-      <li><a href="/sudoku">Sudoku</a></li>
-      <li><a href="/tic-tac-toe">Tic Tac Toe</a></li>
-    </ul>
+    <h1>Welcome to My Games Hub</h1>
+    <p>Select a game:</p>
+
+    <ul></ul>
+
+    <script>
+      const projects = [
+        { folder: 'minesweeper', name: 'Minesweeper' },
+        { folder: 'snake', name: 'Snake' },
+        { folder: 'sudoku', name: 'Sudoku' },
+        { folder: 'tic-tac-toe', name: 'Tic Tac Toe' },
+      ];
+
+      const ul = document.querySelector('ul');
+      projects.forEach(p => {
+        const li = document.createElement('li');
+        li.innerHTML = `<a href="./${p.folder}/index.html">${p.name}</a>`;
+        ul.appendChild(li);
+      });
+    </script>
   </body>
 </html>
