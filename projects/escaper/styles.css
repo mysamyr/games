@@ -1,0 +1,123 @@
+:root {
+  --rows: 3;
+  --cols: 3;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: system-ui, Arial, sans-serif;
+  padding: 16px;
+  background: #f6f8fa;
+  color: #111;
+}
+
+.app-root {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.header {
+  margin-bottom: 12px;
+}
+
+.header h1 {
+  font-size: 28px;
+}
+
+.menu-controls {
+  margin-bottom: 12px;
+}
+
+.levels-list {
+  display: flex;
+  gap: 24px;
+}
+
+.level-section {
+  background: #fff;
+  padding: 8px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  min-width: 200px;
+}
+
+.level-item {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 0;
+}
+
+.level-item button {
+  padding: 4px 8px;
+}
+
+.level-item .delete {
+  background: #fee;
+  border: 1px solid #f88;
+}
+
+.maze-board {
+  width: fit-content;
+  display: grid;
+  gap: 0;
+  border: 8px solid #333;
+  background: white;
+  grid-template-rows: repeat(var(--rows), 40px);
+  grid-template-columns: repeat(var(--cols), 40px);
+}
+
+.cell {
+  width: 40px;
+  height: 40px;
+  border-right: 0 solid transparent;
+  border-bottom: 0 solid transparent;
+  position: relative;
+}
+
+.cell.wall-right {
+  box-shadow: inset -6px 0 0 0 #333;
+}
+
+.cell.wall-down {
+  box-shadow: inset 0 -6px 0 0 #333;
+}
+
+.cell.player {
+  background: linear-gradient(135deg, #ffd600, #ff8a00);
+  opacity: 0.95;
+}
+
+.cell.path {
+  background: rgba(0, 150, 255, 0.15);
+}
+
+.game-controls,
+.editor-controls {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+}
+
+.game-status {
+  margin-top: 8px;
+  font-weight: 600;
+}
+
+.editor-info {
+  margin-left: 8px;
+  align-self: center;
+}
+
+button {
+  cursor: pointer;
+}
+
+input {
+  padding: 6px;
+}
