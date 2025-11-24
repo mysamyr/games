@@ -1,30 +1,11 @@
 const STORAGE_KEY = 'escaper:levels:v1';
 
 const predefined = [
-  { n: 'Easy Maze 1', g: [2, 2, 0, 1, 1, 0] },
-  { n: 'Easy Maze 2', g: [2, 2, 1, 0, 0, 1] },
-  { n: 'Easy Maze 3', g: [3, 3, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0] },
-  { n: 'Medium Maze 1', g: [4, 4, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1] },
-  {
-    n: 'Medium Maze 2',
-    g: [
-      5, 5, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
-    ],
-  },
-  {
-    n: 'Hard Maze 1',
-    g: [
-      6, 6, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
-      1, 0, 1, 0,
-    ],
-  },
-  { n: 'Tricky 1', g: [3, 4, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0] },
-  {
-    n: 'Tricky 2',
-    g: [4, 3, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-  },
-  { n: 'Maze 9', g: [3, 3, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0] },
-  { n: 'Maze 10', g: [3, 2, 0, 1, 1, 0, 1, 0, 1] },
+  { n: 'Easy 2x2 1', g: [2, 2, 0, 1, 1, 0] },
+  { n: 'Easy 2x2 2', g: [2, 2, 1, 0, 0, 1] },
+  { n: 'Easy 3x3 1', g: [3, 3, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0] },
+  { n: 'Easy 3x3 2', g: [3, 3, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1] },
+  { n: 'Maze 3x2', g: [3, 2, 0, 1, 1, 0, 1, 0, 1] },
 ];
 
 function loadCustom() {
@@ -49,7 +30,6 @@ export function saveCustomLevel(level) {
   const arr = loadCustom();
   arr.push(level);
   saveCustom(arr);
-  return arr.length - 1;
 }
 
 export function updateCustomLevel(idx, level) {

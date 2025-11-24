@@ -63,6 +63,7 @@ function renderMain() {
             if (confirm('Delete this custom maze?')) {
               import('./store.js').then(s => {
                 s.deleteCustomLevel(idx);
+                app.innerHTML = '';
                 renderMain();
               });
             }
@@ -109,7 +110,7 @@ async function renderGame(params) {
     );
     return;
   }
-  startGame(app, level, () => navTo());
+  startGame(app, level);
 }
 
 async function renderEditor(params) {

@@ -1,23 +1,64 @@
 import { Button, Div } from './components/index.js';
 import { decodeLevel } from './maze.js';
 import { getBoard, markPlayer, clearBoard } from './ui.js';
+import { navTo } from './navigation.js';
 
-const isFinished = (player, comp) =>
-  player.r === comp.n - 1 && player.c === comp.m - 1;
+const isFinished = (player, { rowsCount, columnsCount }) =>
+  player.row === columnsCount - 1 && player.column === rowsCount - 1;
 
-export function startGame(container, level, onFinish) {
+function canMove(player, decodedLevel, toR, toC) {
+  if (
+    toR < 0 ||
+    toR >= decodedLevel.columnsCount ||
+    toC < 0 ||
+    toC >= decodedLevel.rowsCount
+  )
+    return false;
+  const r = player.row;
+  const c = player.column;
+  const boardConfig = decodedLevel.boardConfig;
+  // moving right
+  if (toR === r && toC === c + 1) return !boardConfig[r][c][0];
+  // moving left
+  if (toR === r && toC === c - 1) return !boardConfig[r][toC][0];
+  // moving down
+  if (toR === r + 1 && toC === c) return !boardConfig[r][c][1];
+  // moving up
+  if (toR === r - 1 && toC === c) return !boardConfig[toR][c][1];
+  return false;
+}
+
+export function startGame(container, level) {
   clearBoard(container);
-  const comp = decodeLevel(level.g || level);
-  const board = getBoard(comp);
-  container.appendChild(board);
-  let player = { r: 0, c: 0 };
-  let ended = false;
+  const decodedLevel = decodeLevel(level.g);
+  let player = { row: 0, column: 0 };
+
+  function move(dr, dc) {
+    const toRow = player.row + dr;
+    const toColumn = player.column + dc;
+    if (!canMove(player, decodedLevel, toRow, toColumn)) return;
+    player.row = toRow;
+    player.column = toColumn;
+    markPlayer(board, toRow, toColumn);
+    if (isFinished(player, decodedLevel)) {
+      status.textContent = 'You escaped!';
+      window.removeEventListener('keydown', keyHandler);
+    }
+  }
+
+  function keyHandler(e) {
+    if (e.key === 'ArrowUp' || e.key === 'w') move(-1, 0);
+    if (e.key === 'ArrowDown' || e.key === 's') move(1, 0);
+    if (e.key === 'ArrowLeft' || e.key === 'a') move(0, -1);
+    if (e.key === 'ArrowRight' || e.key === 'd') move(0, 1);
+  }
+
+  const board = getBoard(decodedLevel);
   markPlayer(board, 0, 0);
 
   const status = Div({
     className: 'game-status',
   });
-  container.appendChild(status);
 
   const controls = Div({
     className: 'game-controls',
@@ -26,57 +67,24 @@ export function startGame(container, level, onFinish) {
   const restart = Button({
     text: 'Restart',
     onClick: () => {
-      player = { r: 0, c: 0 };
+      player = { row: 0, column: 0 };
       markPlayer(board, 0, 0);
       status.textContent = '';
-      ended = false;
+      window.removeEventListener('keydown', keyHandler);
+      window.addEventListener('keydown', keyHandler);
     },
   });
-  controls.appendChild(restart);
-
   const back = Button({
     text: 'Menu',
     onClick: () => {
       window.removeEventListener('keydown', keyHandler);
-      onFinish && onFinish();
+      navTo();
     },
   });
-  controls.appendChild(back);
 
-  container.appendChild(controls);
+  controls.append(restart, back);
 
-  function canMove(toR, toC) {
-    const n = comp.n;
-    const m = comp.m;
-    if (toR < 0 || toR >= n || toC < 0 || toC >= m) return false;
-    const r = player.r;
-    const c = player.c;
-    if (toR === r && toC === c + 1) return !comp.right[r][c];
-    if (toR === r && toC === c - 1) return !comp.right[r][toC];
-    if (toR === r + 1 && toC === c) return !comp.down[r][c];
-    if (toR === r - 1 && toC === c) return !comp.down[toR][c];
-    return false;
-  }
-
-  function move(dr, dc) {
-    const toR = player.r + dr;
-    const toC = player.c + dc;
-    if (!canMove(toR, toC)) return;
-    player.r = toR;
-    player.c = toC;
-    markPlayer(board, toR, toC);
-    if (isFinished(player, comp)) {
-      status.textContent = 'You escaped!';
-      ended = true;
-    }
-  }
+  container.append(board, status, controls);
 
   window.addEventListener('keydown', keyHandler);
-  function keyHandler(e) {
-    if (ended) return;
-    if (e.key === 'ArrowUp' || e.key === 'w') move(-1, 0);
-    if (e.key === 'ArrowDown' || e.key === 's') move(1, 0);
-    if (e.key === 'ArrowLeft' || e.key === 'a') move(0, -1);
-    if (e.key === 'ArrowRight' || e.key === 'd') move(0, 1);
-  }
 }

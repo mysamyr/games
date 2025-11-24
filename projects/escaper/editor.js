@@ -5,75 +5,78 @@ import { getBoard, clearBoard } from './ui.js';
 import { saveCustomLevel } from './store.js';
 import { navTo } from './navigation.js';
 
-export function openEditor(container, level, onSaved) {
+export function openEditor(container, level) {
   clearBoard(container);
-  const comp = level?.g
+  // todo remove hardcoded size
+  const decodedLevel = level
     ? decodeLevel(level.g)
     : {
-        n: 5,
-        m: 5,
-        right: Array.from({ length: 5 }, () => Array(5).fill(false)),
-        down: Array.from({ length: 5 }, () => Array(5).fill(false)),
+        rowsCount: 3,
+        columnsCount: 3,
+        boardConfig: Array.from({ length: 5 }, () =>
+          Array.from({ length: 3 }, () => [false, false])
+        ),
       };
 
-  const board = getBoard(comp);
-  container.appendChild(board);
+  const board = getBoard(decodedLevel);
 
   const controls = Div({
     className: 'editor-controls',
   });
 
-  const nameIn = Input({
+  const nameInput = Input({
     placeholder: 'Level name',
     value: level?.n || '',
   });
-  controls.appendChild(nameIn);
-
   const saveBtn = Button({
     text: 'Save',
     onClick: () => {
-      const sol = isSolvable(comp);
-      if (!sol) {
+      if (!nameInput.value) {
+        alert('Please enter a level name');
+        return;
+      }
+      const solvable = isSolvable(decodedLevel);
+      if (!solvable) {
         alert('Maze invalid (no path from start to exit)');
         return;
       }
-      const compactArr = encodeCompact(comp.n, comp.m, comp.right, comp.down);
-      const lvl = { n: nameIn.value || 'Custom', g: compactArr };
+      const encodedLevel = encodeCompact(decodedLevel);
+      const lvl = { n: nameInput.value, g: encodedLevel };
       saveCustomLevel(lvl);
       alert('Saved');
-      onSaved && onSaved();
+      navTo();
     },
   });
-  controls.appendChild(saveBtn);
-
   const back = Button({
     text: 'Menu',
     onClick: () => navTo(),
   });
-  controls.appendChild(back);
-
   const info = Div({
     className: 'editor-info',
   });
-  controls.appendChild(info);
 
-  container.appendChild(controls);
+  controls.append(nameInput, saveBtn, back, info);
+
+  container.append(controls, board);
 
   // todo
-  // board.addEventListener('click', e => {
-  //   const cell = e.target.closest('.cell');
-  //   if (!cell) return;
-  //   const r = parseInt(cell.dataset.r, 10);
-  //   const c = parseInt(cell.dataset.c, 10);
-  //   if (e.shiftKey) {
-  //     if (r < comp.n - 1) comp.down[r][c] = !comp.down[r][c];
-  //   } else {
-  //     if (c < comp.m - 1) comp.right[r][c] = !comp.right[r][c];
-  //   }
-  //   clearBoard(container);
-  //   getBoard(comp);
-  //   container.appendChild(board);
-  //   const solv = isSolvable(comp);
-  //   info.textContent = solv ? 'Solvable' : 'Unsolvable';
-  // });
+  board.addEventListener('click', e => {
+    const cell = e.target.closest('.cell');
+    if (!cell) return;
+    const column = parseInt(cell.dataset.r, 10);
+    const row = parseInt(cell.dataset.c, 10);
+    if (e.shiftKey) {
+      if (column < decodedLevel.rowsCount - 1)
+        decodedLevel.boardConfig[column][row][1] =
+          !decodedLevel.boardConfig[column][row][1];
+      cell.classList.toggle('wall-down');
+    } else {
+      if (row < decodedLevel.columnsCount - 1)
+        decodedLevel.boardConfig[column][row][0] =
+          !decodedLevel.boardConfig[column][row][0];
+      cell.classList.toggle('wall-right');
+    }
+    const solvable = isSolvable(decodedLevel);
+    info.textContent = solvable ? 'Solvable' : 'Unsolvable';
+  });
 }
