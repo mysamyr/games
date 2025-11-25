@@ -30,7 +30,7 @@ function resolveSudoku(grid) {
 export function findEmptyCell(grid) {
   for (let row = 0; row < GRID_SIZE; row++) {
     for (let column = 0; column < GRID_SIZE; column++) {
-      if (grid[row][column] === null) return { row, column };
+      if (grid[row][column] === null) return { x: row, y: column };
     }
   }
   return null;

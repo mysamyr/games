@@ -3,42 +3,44 @@ import { decodeLevel } from './maze.js';
 import { getBoard, markPlayer, clearBoard } from './ui.js';
 import { navTo } from './navigation.js';
 
-const isFinished = (player, { rowsCount, columnsCount }) =>
-  player.row === columnsCount - 1 && player.column === rowsCount - 1;
+const isFinished = (player, { boardWidth, boardHeight }) =>
+  player.y === boardHeight - 1 && player.x === boardWidth - 1;
 
 function canMove(player, decodedLevel, toR, toC) {
   if (
     toR < 0 ||
-    toR >= decodedLevel.columnsCount ||
+    toR >= decodedLevel.boardHeight ||
     toC < 0 ||
-    toC >= decodedLevel.rowsCount
+    toC >= decodedLevel.boardWidth
   )
     return false;
-  const r = player.row;
-  const c = player.column;
   const boardConfig = decodedLevel.boardConfig;
   // moving right
-  if (toR === r && toC === c + 1) return !boardConfig[r][c][0];
+  if (toR === player.y && toC === player.x + 1)
+    return !boardConfig[player.y][player.x][0];
   // moving left
-  if (toR === r && toC === c - 1) return !boardConfig[r][toC][0];
+  if (toR === player.y && toC === player.x - 1)
+    return !boardConfig[player.y][toC][0];
   // moving down
-  if (toR === r + 1 && toC === c) return !boardConfig[r][c][1];
+  if (toR === player.y + 1 && toC === player.x)
+    return !boardConfig[player.y][player.x][1];
   // moving up
-  if (toR === r - 1 && toC === c) return !boardConfig[toR][c][1];
+  if (toR === player.y - 1 && toC === player.x)
+    return !boardConfig[toR][player.x][1];
   return false;
 }
 
 export function startGame(container, level) {
   clearBoard(container);
   const decodedLevel = decodeLevel(level.g);
-  let player = { row: 0, column: 0 };
+  let player = { x: 0, y: 0 };
 
-  function move(dr, dc) {
-    const toRow = player.row + dr;
-    const toColumn = player.column + dc;
+  function move(verticalDir, horizontalDir) {
+    const toRow = player.y + verticalDir;
+    const toColumn = player.x + horizontalDir;
     if (!canMove(player, decodedLevel, toRow, toColumn)) return;
-    player.row = toRow;
-    player.column = toColumn;
+    player.x = toColumn;
+    player.y = toRow;
     markPlayer(board, toRow, toColumn);
     if (isFinished(player, decodedLevel)) {
       status.textContent = 'You escaped!';
@@ -67,7 +69,7 @@ export function startGame(container, level) {
   const restart = Button({
     text: 'Restart',
     onClick: () => {
-      player = { row: 0, column: 0 };
+      player = { x: 0, y: 0 };
       markPlayer(board, 0, 0);
       status.textContent = '';
       window.removeEventListener('keydown', keyHandler);

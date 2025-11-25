@@ -41,7 +41,7 @@ function getAdjacentCells(row, col) {
       const newRow = row + i;
       const newCol = col + j;
       if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols) {
-        res.push({ row: newRow, col: newCol });
+        res.push({ x: newRow, col: newCol });
       }
     }
   }

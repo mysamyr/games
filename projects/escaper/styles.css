@@ -75,26 +75,22 @@ body {
 .cell {
   width: 40px;
   height: 40px;
-  border-right: 0 solid transparent;
-  border-bottom: 0 solid transparent;
+  border-right: 3px solid #fff;
+  border-bottom: 3px solid #fff;
   position: relative;
 }
 
 .cell.wall-right {
-  box-shadow: inset -6px 0 0 0 #333;
+  border-right-color: #333;
 }
 
 .cell.wall-down {
-  box-shadow: inset 0 -6px 0 0 #333;
+  border-bottom-color: #333;
 }
 
 .cell.player {
   background: linear-gradient(135deg, #ffd600, #ff8a00);
   opacity: 0.95;
-}
-
-.cell.path {
-  background: rgba(0, 150, 255, 0.15);
 }
 
 .game-controls,

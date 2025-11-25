@@ -23,8 +23,8 @@ export const DIFFICULTIES = {
 
 export function convertIndexToPosition(idx) {
   return {
-    row: Math.floor(idx / GRID_SIZE),
-    column: idx % GRID_SIZE,
+    x: Math.floor(idx / GRID_SIZE),
+    y: idx % GRID_SIZE,
   };
 }
 

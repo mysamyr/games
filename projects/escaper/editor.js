@@ -11,9 +11,9 @@ export function openEditor(container, level) {
   const decodedLevel = level
     ? decodeLevel(level.g)
     : {
-        rowsCount: 3,
-        columnsCount: 3,
-        boardConfig: Array.from({ length: 5 }, () =>
+        boardWidth: 3,
+        boardHeight: 3,
+        boardConfig: Array.from({ length: 3 }, () =>
           Array.from({ length: 3 }, () => [false, false])
         ),
       };
@@ -53,25 +53,25 @@ export function openEditor(container, level) {
   });
   const info = Div({
     className: 'editor-info',
+    text: 'Solvable',
   });
 
   controls.append(nameInput, saveBtn, back, info);
 
   container.append(controls, board);
 
-  // todo
   board.addEventListener('click', e => {
     const cell = e.target.closest('.cell');
     if (!cell) return;
     const column = parseInt(cell.dataset.r, 10);
     const row = parseInt(cell.dataset.c, 10);
     if (e.shiftKey) {
-      if (column < decodedLevel.rowsCount - 1)
+      if (column < decodedLevel.boardWidth - 1)
         decodedLevel.boardConfig[column][row][1] =
           !decodedLevel.boardConfig[column][row][1];
       cell.classList.toggle('wall-down');
     } else {
-      if (row < decodedLevel.columnsCount - 1)
+      if (row < decodedLevel.boardHeight - 1)
         decodedLevel.boardConfig[column][row][0] =
           !decodedLevel.boardConfig[column][row][0];
       cell.classList.toggle('wall-right');

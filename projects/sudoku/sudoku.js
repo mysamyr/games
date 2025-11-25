@@ -17,7 +17,7 @@ export class Sudoku {
 
     const duplicates = [...duplicatesInColumn, ...duplicatesInRow];
     duplicatesInBox.forEach(duplicateInBox => {
-      if (duplicateInBox.row !== row && duplicateInBox.column !== column)
+      if (duplicateInBox.x !== row && duplicateInBox.y !== column)
         duplicates.push(duplicateInBox);
     });
 
@@ -28,7 +28,7 @@ export class Sudoku {
     const duplicates = [];
     for (let iRow = 0; iRow < GRID_SIZE; iRow++) {
       if (this.grid[iRow][column] === value && iRow !== row) {
-        duplicates.push({ row: iRow, column });
+        duplicates.push({ x: iRow, y: column });
       }
     }
     return duplicates;
@@ -38,7 +38,7 @@ export class Sudoku {
     const duplicates = [];
     for (let iColumn = 0; iColumn < GRID_SIZE; iColumn++) {
       if (this.grid[row][iColumn] === value && iColumn !== column) {
-        duplicates.push({ row, column: iColumn });
+        duplicates.push({ x: row, y: iColumn });
       }
     }
     return duplicates;
@@ -60,7 +60,7 @@ export class Sudoku {
           iRow !== value &&
           iColumn !== value
         ) {
-          duplicates.push({ row: iRow, column: iColumn });
+          duplicates.push({ x: iRow, y: iColumn });
         }
       }
     }
