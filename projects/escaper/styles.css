@@ -1,6 +1,11 @@
 :root {
   --rows: 3;
   --cols: 3;
+  --red: #d32f2f;
+  --bg-color: #f6f8fa;
+  --white: #fff;
+  --black: #111;
+  --green: #388e3c;
 }
 
 * {
@@ -12,11 +17,11 @@
 body {
   font-family: system-ui, Arial, sans-serif;
   padding: 16px;
-  background: #f6f8fa;
-  color: #111;
+  background: var(--bg-color);
+  color: var(--black);
 }
 
-.app-root {
+#app {
   max-width: 900px;
   margin: 0 auto;
 }
@@ -39,7 +44,7 @@ body {
 }
 
 .level-section {
-  background: #fff;
+  background: var(--white);
   padding: 8px;
   border-radius: 6px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
@@ -67,7 +72,7 @@ body {
   display: grid;
   gap: 0;
   border: 8px solid #333;
-  background: white;
+  background: var(--white);
   grid-template-rows: repeat(var(--rows), 40px);
   grid-template-columns: repeat(var(--cols), 40px);
 }
@@ -75,8 +80,8 @@ body {
 .cell {
   width: 40px;
   height: 40px;
-  border-right: 3px solid #fff;
-  border-bottom: 3px solid #fff;
+  border-right: 3px solid var(--white);
+  border-bottom: 3px solid var(--white);
   position: relative;
 }
 
@@ -108,6 +113,35 @@ body {
 .editor-info {
   margin-left: 8px;
   align-self: center;
+}
+
+/* Snackbar */
+.snackbar-container {
+  position: fixed;
+  bottom: 5%;
+  right: 5%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--green);
+  color: var(--white);
+  padding: 4px;
+  border-radius: 0.25em;
+  overflow: hidden;
+  animation: 300ms ease-out forwards slide-up;
+  z-index: 10;
+}
+
+.snackbar-label {
+  padding: 12px 8px;
+}
+
+.snackbar-dismiss {
+  color: var(--red);
+  font-weight: bold;
+  margin: 0 8px;
+  cursor: pointer;
+  padding: 8px;
 }
 
 button {

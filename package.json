@@ -4,6 +4,7 @@
   "author": "Mysamyr",
   "license": "ISC",
   "description": "Games made by Mysamyr",
+  "type": "module",
   "scripts": {
     "docker": "docker run -p 80:80 .",
     "format": "prettier --write ./projects",

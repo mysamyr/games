@@ -1,4 +1,4 @@
-import { Div } from './components/index.js';
+import { Div } from '../components';
 
 export function getBoard(compact) {
   const { boardWidth, boardHeight, boardConfig } = compact;
