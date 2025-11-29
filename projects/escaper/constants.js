@@ -13,3 +13,8 @@ export const EDITOR_INFO_MESSAGE = {
   SOLVABLE: 'Solvable',
   UNSOLVABLE: 'Unsolvable',
 };
+
+export const DEFAULT_LEVEL_SIZE = {
+  WIDTH: 3,
+  HEIGHT: 3,
+};

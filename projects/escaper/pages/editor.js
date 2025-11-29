@@ -1,5 +1,5 @@
-import { EDITOR_INFO_MESSAGE } from '../constants.js';
-import { Button, Div, Input } from '../components/index.js';
+import { DEFAULT_LEVEL_SIZE, EDITOR_INFO_MESSAGE } from '../constants.js';
+import { Button, Div, Input, Span } from '../components/index.js';
 import { decodeLevel, encodeCompact } from '../features/maze.js';
 import { isSolvable } from '../features/validator.js';
 import { clearBoard, getBoard } from '../features/ui.js';
@@ -12,15 +12,17 @@ const app = document.getElementById('app');
 
 function addWall({ decodedLevel, column, row, direction, cell }) {
   if (direction === 'down') {
-    if (column < decodedLevel.boardWidth - 1)
+    if (column < decodedLevel.boardHeight - 1) {
       decodedLevel.boardConfig[column][row][1] =
         !decodedLevel.boardConfig[column][row][1];
-    cell.classList.toggle('wall-down');
+      cell.classList.toggle('wall-down');
+    }
   } else if (direction === 'right') {
-    if (row < decodedLevel.boardHeight - 1)
+    if (row < decodedLevel.boardWidth - 1) {
       decodedLevel.boardConfig[column][row][0] =
         !decodedLevel.boardConfig[column][row][0];
-    cell.classList.toggle('wall-right');
+      cell.classList.toggle('wall-right');
+    }
   }
 }
 
@@ -46,14 +48,13 @@ function addDownWall({ decodedLevel, column, row, cell }) {
 
 function openEditor(level, idx) {
   clearBoard(app);
-  // todo remove hardcoded size - via modal???
   const decodedLevel = level
     ? decodeLevel(level.g)
     : {
-        boardWidth: 3,
-        boardHeight: 3,
-        boardConfig: Array.from({ length: 3 }, () =>
-          Array.from({ length: 3 }, () => [false, false])
+        boardWidth: DEFAULT_LEVEL_SIZE.WIDTH,
+        boardHeight: DEFAULT_LEVEL_SIZE.HEIGHT,
+        boardConfig: Array.from({ length: DEFAULT_LEVEL_SIZE.HEIGHT }, () =>
+          Array.from({ length: DEFAULT_LEVEL_SIZE.WIDTH }, () => [false, false])
         ),
       };
 
@@ -77,9 +78,14 @@ function openEditor(level, idx) {
         cell,
       });
     }
-    info.textContent = isSolvable(decodedLevel)
-      ? EDITOR_INFO_MESSAGE.SOLVABLE
-      : EDITOR_INFO_MESSAGE.UNSOLVABLE;
+    const solvable = isSolvable(decodedLevel);
+    if (solvable) {
+      info.textContent = EDITOR_INFO_MESSAGE.SOLVABLE;
+      info.classList.remove('red');
+    } else {
+      info.textContent = EDITOR_INFO_MESSAGE.UNSOLVABLE;
+      info.classList.add('red');
+    }
   }
 
   function onLevelSave() {
@@ -104,7 +110,7 @@ function openEditor(level, idx) {
     navTo();
   }
 
-  const board = getBoard(decodedLevel);
+  let board = getBoard(decodedLevel);
 
   const nameInput = Input({
     placeholder: 'Level name',
@@ -115,10 +121,89 @@ function openEditor(level, idx) {
     text: EDITOR_INFO_MESSAGE.SOLVABLE,
   });
 
-  const controls = Div({
-    className: 'editor-controls',
+  function renderBoard() {
+    const newBoard = getBoard(decodedLevel);
+    board.replaceWith(newBoard);
+    board = newBoard;
+    board.addEventListener('click', onBoardClick);
+    info.textContent = isSolvable(decodedLevel)
+      ? EDITOR_INFO_MESSAGE.SOLVABLE
+      : EDITOR_INFO_MESSAGE.UNSOLVABLE;
+  }
+
+  function onChangeWidth(e) {
+    const val = parseInt(e.target.value, 10);
+    if (isNaN(val) || val < 1) return;
+    const oldW = decodedLevel.boardWidth;
+    const newW = val;
+    if (newW === oldW) return;
+    if (newW > oldW) {
+      // add new columns preserving existing rows
+      for (let c = oldW; c < newW; c++) {
+        decodedLevel.boardConfig = decodedLevel.boardConfig.map(column => [
+          ...column,
+          [false, false],
+        ]);
+      }
+    } else {
+      // shrink columns
+      decodedLevel.boardConfig = decodedLevel.boardConfig.map(column =>
+        column.slice(0, newW)
+      );
+    }
+    decodedLevel.boardWidth = newW;
+    renderBoard();
+  }
+
+  function onChangeHeight(e) {
+    const val = parseInt(e.target.value, 10);
+    if (isNaN(val) || val < 1) return;
+    const w = decodedLevel.boardWidth;
+    const oldH = decodedLevel.boardHeight;
+    const newH = val;
+    if (newH === oldH) return;
+    if (newH > oldH) {
+      // add columns
+      for (let c = oldH; c < newH; c++) {
+        decodedLevel.boardConfig.push(
+          Array.from({ length: w }, () => [false, false])
+        );
+      }
+    } else {
+      // shrink columns
+      decodedLevel.boardConfig = decodedLevel.boardConfig.slice(0, newH);
+    }
+    decodedLevel.boardHeight = newH;
+    renderBoard();
+  }
+
+  const inputs = Div({
+    className: 'controls-row',
     children: [
       nameInput,
+      Span({
+        text: 'Width:',
+      }),
+      Input({
+        type: 'number',
+        value: decodedLevel.boardWidth,
+        min: 1,
+        onChange: onChangeWidth,
+      }),
+      Span({
+        text: 'Height:',
+      }),
+      Input({
+        type: 'number',
+        value: decodedLevel.boardHeight,
+        min: 1,
+        onChange: onChangeHeight,
+      }),
+    ],
+  });
+  const buttons = Div({
+    className: 'controls-row',
+    children: [
       Button({
         text: 'Save',
         onClick: onLevelSave,
@@ -127,8 +212,12 @@ function openEditor(level, idx) {
         text: 'Menu',
         onClick: () => navTo(),
       }),
-      info,
     ],
+  });
+
+  const controls = Div({
+    className: 'editor-controls',
+    children: [inputs, buttons, info],
   });
 
   app.append(controls, board);

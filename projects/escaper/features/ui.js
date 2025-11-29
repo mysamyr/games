@@ -19,6 +19,8 @@ export function getBoard(compact) {
         cell.classList.add('wall-right');
       if (y < boardHeight - 1 && boardConfig[y][x][1])
         cell.classList.add('wall-down');
+      if (x === boardWidth - 1 && y === boardHeight - 1)
+        cell.classList.add('goal');
       board.appendChild(cell);
     }
   }

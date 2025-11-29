@@ -57,7 +57,7 @@ export default props => {
       if (e.key === 'Enter') props.onEnter(e);
     });
   if (props.onClick) input.addEventListener('click', props.onClick);
-  if (props.onChange) input.addEventListener('keyup', props.onChange);
+  if (props.onChange) input.addEventListener('change', props.onChange);
 
   return input;
 };
