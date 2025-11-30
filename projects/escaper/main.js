@@ -1,6 +1,6 @@
 import { PATH } from './constants.js';
-import { navTo, parseHash } from './utils/navigation.js';
 import { initModal } from './features/modal.js';
+import { navTo, parseHash } from './utils/navigation.js';
 
 import MainPage from './pages/main.js';
 import GamePage from './pages/game.js';

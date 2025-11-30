@@ -1,12 +1,6 @@
-//{
-//   lvl: number;
-//   id?: string;
-//   text?: string;
-//   className?: string;
-// }
 /**
- * @param {Object} [props]
- * @param {number} [props.lvl]
+ * @param {object} [props]
+ * @param {number} [props.lvl = 1]
  * @param {string} [props.className]
  * @param {string} [props.text]
  * @param {string} [props.id]

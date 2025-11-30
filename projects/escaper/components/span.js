@@ -1,7 +1,7 @@
 import { isNil } from '../utils/helpers.js';
 
 /**
- * @param {Object} [props]
+ * @param {object} [props]
  * @param {string} [props.className]
  * @param {string} [props.text]
  * @param {string} [props.id]

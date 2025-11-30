@@ -157,6 +157,73 @@ body {
   color: var(--green);
 }
 
+/* Win pulse/glow */
+.escaper-win {
+  animation: escaper-pulse 900ms ease-in-out 1;
+  transform-origin: center;
+}
+
+.game-status.escaper-win {
+  animation: escaper-status-pop 700ms ease-out 1;
+  color: #fff;
+  background: linear-gradient(90deg, #ff8a00, #e52e71);
+  padding: 8px 12px;
+  border-radius: 6px;
+  box-shadow: 0 6px 20px rgba(229, 46, 113, 0.25);
+}
+
+@keyframes escaper-pulse {
+  0% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 0 rgba(0, 0, 0, 0));
+  }
+  40% {
+    transform: scale(1.04);
+    filter: drop-shadow(0 12px 24px rgba(229, 46, 113, 0.15));
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes escaper-status-pop {
+  0% {
+    transform: translateY(6px) scale(0.98);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(-6px) scale(1.06);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Confetti */
+.escaper-confetti {
+  position: absolute;
+  pointer-events: none;
+  width: 10px;
+  height: 14px;
+  opacity: 0.95;
+  transform-origin: center;
+  will-change: transform, top, opacity;
+  animation: confetti-fall 5000ms linear forwards;
+  border-radius: 2px;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-20vh) rotate(var(--start-rot, 0deg));
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) rotate(calc(var(--start-rot, 0deg) + 720deg));
+    opacity: 0;
+  }
+}
+
 /* Snackbar */
 .snackbar-container {
   position: fixed;
