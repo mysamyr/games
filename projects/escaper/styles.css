@@ -1,11 +1,14 @@
 :root {
   --rows: 3;
   --cols: 3;
+  --start-rot: 0deg;
   --red: #d32f2f;
   --bg-color: #f6f8fa;
   --white: #fff;
   --black: #111;
   --green: #388e3c;
+  --yellow: #ffd600;
+  --orange: #ff8a00;
 }
 
 * {
@@ -35,7 +38,7 @@ body {
 }
 
 .menu-controls {
-  margin-bottom: 12px;
+  margin-top: 12px;
 }
 
 .levels-list {
@@ -43,7 +46,18 @@ body {
   gap: 24px;
 }
 
-.level-section {
+.default-level-section {
+  background: var(--white);
+  padding: 12px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  min-width: 200px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.custom-level-section {
   background: var(--white);
   padding: 8px;
   border-radius: 6px;
@@ -62,17 +76,21 @@ body {
   padding: 4px 8px;
 }
 
+.level-item .edit {
+  background: var(--yellow);
+  color: var(--black);
+}
+
 .level-item .delete {
-  background: var(--white);
-  border: 1px solid var(--red);
-  color: var(--red);
+  background: var(--red);
+  color: var(--white);
 }
 
 .maze-board {
   width: fit-content;
   display: grid;
   gap: 0;
-  border: 8px solid #333;
+  border: 8px solid var(--black);
   background: var(--white);
   grid-template-rows: repeat(var(--rows), 40px);
   grid-template-columns: repeat(var(--cols), 40px);
@@ -87,11 +105,11 @@ body {
 }
 
 .cell.wall-right {
-  border-right-color: #333;
+  border-right-color: var(--black);
 }
 
 .cell.wall-down {
-  border-bottom-color: #333;
+  border-bottom-color: var(--black);
 }
 
 .cell.player {
@@ -107,7 +125,7 @@ body {
   top: 50%;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #ffd600, #ff8a00);
+  background: radial-gradient(circle at 30% 30%, var(--yellow), var(--orange));
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
   pointer-events: none;
   z-index: 1;
@@ -147,8 +165,13 @@ body {
   gap: 8px;
 }
 
+.level-navigation-button {
+  background: var(--orange);
+  color: var(--black);
+}
+
 .game-status {
-  margin-top: 8px;
+  margin: 8px 0;
   font-weight: 600;
 }
 
@@ -165,7 +188,7 @@ body {
 
 .game-status.escaper-win {
   animation: escaper-status-pop 700ms ease-out 1;
-  color: #fff;
+  color: var(--white);
   background: linear-gradient(90deg, #ff8a00, #e52e71);
   padding: 8px 12px;
   border-radius: 6px;

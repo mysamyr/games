@@ -1,5 +1,5 @@
 import { navTo } from '../utils/navigation.js';
-import { LEVEL_TYPE, PATH } from '../constants/index.js';
+import { PATH, LEVEL_TYPE } from '../constants/index.js';
 import { deleteCustomLevel, listAllLevels } from '../store/index.js';
 import { Button, Div, Header, Span } from '../components/index.js';
 
@@ -13,50 +13,75 @@ const onDeleteLevel = idx => {
   }
 };
 
-const makeLevelItem = (lvl, idx, type) => {
-  const item = Div({
-    className: 'level-item',
-    children: [
-      Span({ text: lvl.n || lvl.name || `Level ${idx}` }),
-      Button({
-        text: 'Play',
-        onClick: () => navTo(`${PATH.GAME}?id=${type}-${idx}`),
-      }),
-    ],
-  });
-
-  if (type === LEVEL_TYPE.CUSTOM) {
-    const edit = Button({
-      text: 'Edit',
-      onClick: () => navTo(`${PATH.EDITOR}?id=${type}-${idx}`),
-    });
-    const del = Button({
-      className: 'delete',
-      text: '✕',
-      title: 'Delete',
-      onClick: () => {
-        onDeleteLevel(idx);
-      },
-    });
-    item.append(edit, del);
-  }
-  return item;
-};
-
-const makeSection = (title, arr, type) => {
+const makePredefinedSection = arr => {
+  const container = Div();
   const sect = Div({
-    className: 'level-section',
-    children: [
-      Header({
-        lvl: 3,
-        text: title,
-      }),
-    ],
+    className: 'default-level-section',
   });
   arr.forEach((lvl, idx) => {
-    sect.appendChild(makeLevelItem(lvl, idx, type));
+    sect.appendChild(
+      Div({
+        children: [
+          Button({
+            text: `Level ${lvl.n}`,
+            onClick: () =>
+              navTo(`${PATH.GAME}?id=${LEVEL_TYPE.PREDEFINED}-${idx}`),
+          }),
+        ],
+      })
+    );
   });
-  return sect;
+  container.append(
+    Header({
+      lvl: 3,
+      text: 'Default levels:',
+    }),
+    sect
+  );
+  return container;
+};
+
+const makeCustomSection = arr => {
+  const container = Div();
+  const sect = Div({
+    className: 'custom-level-section',
+  });
+  arr.forEach((lvl, idx) => {
+    sect.appendChild(
+      Div({
+        className: 'level-item',
+        children: [
+          Span({ text: lvl.n }),
+          Button({
+            text: 'Play',
+            onClick: () => navTo(`${PATH.GAME}?id=${LEVEL_TYPE.CUSTOM}-${idx}`),
+          }),
+          Button({
+            className: 'edit',
+            text: 'Edit',
+            onClick: () =>
+              navTo(`${PATH.EDITOR}?id=${LEVEL_TYPE.CUSTOM}-${idx}`),
+          }),
+          Button({
+            className: 'delete',
+            text: '✕',
+            title: 'Delete',
+            onClick: () => {
+              onDeleteLevel(idx);
+            },
+          }),
+        ],
+      })
+    );
+  });
+  container.append(
+    Header({
+      lvl: 3,
+      text: 'Custom levels:',
+    }),
+    sect
+  );
+  return container;
 };
 
 export default function () {
@@ -71,7 +96,7 @@ export default function () {
     className: 'menu-controls',
     children: [
       Button({
-        text: 'Create new maze',
+        text: 'Create custom maze',
         onClick: () => navTo(PATH.EDITOR),
       }),
     ],
@@ -79,11 +104,8 @@ export default function () {
 
   const list = Div({
     className: 'levels-list',
-    children: [
-      makeSection('Pre-defined', predefined, LEVEL_TYPE.PREDEFINED),
-      makeSection('Custom', custom, LEVEL_TYPE.CUSTOM),
-    ],
+    children: [makePredefinedSection(predefined), makeCustomSection(custom)],
   });
 
-  app.append(header, controls, list);
+  app.append(header, list, controls);
 }

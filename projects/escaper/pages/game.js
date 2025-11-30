@@ -156,50 +156,58 @@ function startGame({ level, idx, kind }) {
     navTo(`${PATH.GAME}?id=${LEVEL_TYPE.PREDEFINED}-${idx + 1}`);
   }
 
+  function getControlsSection() {
+    const controls = Div({
+      className: 'game-controls',
+      children: [
+        Button({ text: 'Restart', onClick: onRestart }),
+        Button({ text: 'Menu', onClick: onClickMenu }),
+      ],
+    });
+
+    // wrap buttns in a row div for better styling
+
+    if (kind === LEVEL_TYPE.PREDEFINED) {
+      const navigationButtons = Div({
+        className: 'controls-row',
+      });
+
+      if (hasPrevLevel(idx)) {
+        navigationButtons.appendChild(
+          Button({
+            className: 'level-navigation-button',
+            text: 'Prev Level',
+            onClick: onClickPrevLevel,
+          })
+        );
+      }
+      if (hasNextLevel(idx)) {
+        // todo is level was completed
+        navigationButtons.appendChild(
+          Button({
+            className: 'level-navigation-button',
+            text: 'Next Level',
+            onClick: onClickNextLevel,
+          })
+        );
+      }
+      controls.appendChild(navigationButtons);
+    }
+
+    return controls;
+  }
+
   const status = Paragraph({
     className: 'game-status',
   });
-
-  const controls = Div({
-    className: 'game-controls',
-    children: [
-      Button({ text: 'Restart', onClick: onRestart }),
-      Button({ text: 'Menu', onClick: onClickMenu }),
-    ],
-  });
-
-  if (kind === LEVEL_TYPE.PREDEFINED) {
-    const controlButtons = Div({
-      className: 'controls-row',
-    });
-
-    if (hasPrevLevel(idx)) {
-      controlButtons.appendChild(
-        Button({
-          text: 'Prev Level',
-          onClick: onClickPrevLevel,
-        })
-      );
-    }
-    if (hasNextLevel(idx)) {
-      // todo is level was completed
-      controlButtons.appendChild(
-        Button({
-          text: 'Next Level',
-          onClick: onClickNextLevel,
-        })
-      );
-    }
-    controls.appendChild(controlButtons);
-  }
 
   app.append(
     Header({
       text: `Level: ${level.n}`,
     }),
-    board,
     status,
-    controls
+    board,
+    getControlsSection()
   );
 
   window.addEventListener('keydown', keyHandler);
