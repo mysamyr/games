@@ -1,11 +1,11 @@
 const STORAGE_KEY = 'escaper:levels:v1';
 
 const predefined = [
-  { n: 'Easy 2x2 1', g: [2, 2, 0, 1, 1, 0] },
-  { n: 'Easy 2x2 2', g: [2, 2, 1, 0, 0, 1] },
-  { n: 'Easy 3x2', g: [3, 2, 0, 1, 1, 0, 1, 0, 1] },
-  { n: 'Easy 3x3 1', g: [3, 3, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0] },
-  { n: 'Easy 3x3 2', g: [3, 3, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1] },
+  { n: '1', g: [2, 2, 0, 1, 1, 0] },
+  { n: '2', g: [2, 2, 1, 0, 0, 1] },
+  { n: '3', g: [3, 2, 0, 1, 1, 0, 1, 0, 1] },
+  { n: '4', g: [3, 3, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0] },
+  { n: '5', g: [3, 3, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1] },
 ];
 
 function loadCustom() {
@@ -42,4 +42,12 @@ export function deleteCustomLevel(idx) {
   const arr = loadCustom();
   arr.splice(idx, 1);
   saveCustom(arr);
+}
+
+export function hasPrevLevel(currIdx) {
+  return currIdx > 0;
+}
+
+export function hasNextLevel(currIdx) {
+  return currIdx < predefined.length - 1;
 }

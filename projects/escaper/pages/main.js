@@ -1,6 +1,6 @@
 import { navTo } from '../utils/navigation.js';
-import { LEVEL_TYPE, PATH } from '../constants.js';
-import { deleteCustomLevel, listAllLevels } from '../store.js';
+import { LEVEL_TYPE, PATH } from '../constants/index.js';
+import { deleteCustomLevel, listAllLevels } from '../store/index.js';
 import { Button, Div, Header, Span } from '../components/index.js';
 
 const app = document.getElementById('app');

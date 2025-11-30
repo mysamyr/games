@@ -14,6 +14,11 @@ export const EDITOR_INFO_MESSAGE = {
   UNSOLVABLE: 'Unsolvable',
 };
 
+export const GAME_STATUS_MESSAGE = {
+  ESCAPED: 'You escaped!',
+  ESCAPED_LAST: 'You escaped the last default level! Congratulations!',
+};
+
 export const DEFAULT_LEVEL_SIZE = {
   WIDTH: 3,
   HEIGHT: 3,

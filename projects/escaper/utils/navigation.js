@@ -1,4 +1,4 @@
-import { PATH } from '../constants.js';
+import { PATH } from '../constants/index.js';
 
 export function parseHash() {
   const hash = location.hash.replace(/^#/, '') || PATH.HOME;

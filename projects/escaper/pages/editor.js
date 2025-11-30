@@ -1,9 +1,9 @@
-import { DEFAULT_LEVEL_SIZE, EDITOR_INFO_MESSAGE } from '../constants.js';
+import { DEFAULT_LEVEL_SIZE, EDITOR_INFO_MESSAGE } from '../constants/index.js';
 import { Button, Div, Input, Span } from '../components/index.js';
 import { decodeLevel, encodeCompact } from '../features/maze.js';
 import { isSolvable } from '../features/validator.js';
 import { clearBoard, getBoard } from '../features/ui.js';
-import { saveCustomLevel, updateCustomLevel } from '../store.js';
+import { saveCustomLevel, updateCustomLevel } from '../store/index.js';
 import { navTo } from '../utils/navigation.js';
 import { getLevel } from '../utils/helpers.js';
 import Snackbar from '../features/snackbar.js';
@@ -232,11 +232,11 @@ export default function (params) {
     return;
   }
 
-  const level = getLevel(id);
+  const { idx, level } = getLevel(id);
   if (!level) {
     openEditor();
     return;
   }
 
-  openEditor(level, id.split('-')[1]);
+  openEditor(level, idx);
 }

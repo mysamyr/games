@@ -1,3 +1,5 @@
+import { isNil } from '../utils/helpers.js';
+
 /**
  * @param {object} [props]
  * @param {number} [props.lvl = 1]
@@ -11,7 +13,7 @@ export default props => {
   if (props.className) {
     h.classList.add(...props.className.split(' ').filter(Boolean));
   }
-  if (props.text) h.innerHTML = props.text;
+  if (!isNil(props.text)) h.innerHTML = props.text;
   if (props.id) h.id = props.id;
 
   return h;

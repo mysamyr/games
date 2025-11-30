@@ -1,8 +1,9 @@
-import { Button, Div } from '../components/index.js';
+import { Button, Div, Header, Paragraph } from '../components/index.js';
 import { decodeLevel } from '../features/maze.js';
 import { clearBoard, getBoard, markPlayer } from '../features/ui.js';
 import { navTo } from '../utils/navigation.js';
-import { PATH } from '../constants.js';
+import { GAME_STATUS_MESSAGE, LEVEL_TYPE, PATH } from '../constants/index.js';
+import { hasNextLevel, hasPrevLevel } from '../store/index.js';
 import { getLevel } from '../utils/helpers.js';
 
 const app = document.getElementById('app');
@@ -64,9 +65,9 @@ function playWinAnimation(boardEl, statusEl) {
   }, cleanupAfter);
 }
 
-function startGame(level) {
+function startGame({ level, idx, kind }) {
   clearBoard(app);
-  const decodedLevel = decodeLevel(level);
+  const decodedLevel = decodeLevel(level.g);
   let player = { x: 0, y: 0 };
   const board = getBoard(decodedLevel);
   markPlayer(board, 0, 0);
@@ -117,7 +118,10 @@ function startGame(level) {
     player.y = toRow;
     markPlayer(board, toRow, toColumn);
     if (isFinished()) {
-      status.textContent = 'You escaped!';
+      status.textContent =
+        kind === LEVEL_TYPE.PREDEFINED && !hasNextLevel(idx)
+          ? GAME_STATUS_MESSAGE.ESCAPED_LAST
+          : GAME_STATUS_MESSAGE.ESCAPED;
       window.removeEventListener('keydown', keyHandler);
       playWinAnimation(board, status);
     }
@@ -142,7 +146,17 @@ function startGame(level) {
     navTo();
   }
 
-  const status = Div({
+  function onClickPrevLevel() {
+    window.removeEventListener('keydown', keyHandler);
+    navTo(`${PATH.GAME}?id=${LEVEL_TYPE.PREDEFINED}-${idx - 1}`);
+  }
+
+  function onClickNextLevel() {
+    window.removeEventListener('keydown', keyHandler);
+    navTo(`${PATH.GAME}?id=${LEVEL_TYPE.PREDEFINED}-${idx + 1}`);
+  }
+
+  const status = Paragraph({
     className: 'game-status',
   });
 
@@ -154,7 +168,39 @@ function startGame(level) {
     ],
   });
 
-  app.append(board, status, controls);
+  if (kind === LEVEL_TYPE.PREDEFINED) {
+    const controlButtons = Div({
+      className: 'controls-row',
+    });
+
+    if (hasPrevLevel(idx)) {
+      controlButtons.appendChild(
+        Button({
+          text: 'Prev Level',
+          onClick: onClickPrevLevel,
+        })
+      );
+    }
+    if (hasNextLevel(idx)) {
+      // todo is level was completed
+      controlButtons.appendChild(
+        Button({
+          text: 'Next Level',
+          onClick: onClickNextLevel,
+        })
+      );
+    }
+    controls.appendChild(controlButtons);
+  }
+
+  app.append(
+    Header({
+      text: `Level: ${level.n}`,
+    }),
+    board,
+    status,
+    controls
+  );
 
   window.addEventListener('keydown', keyHandler);
 }
@@ -167,7 +213,7 @@ export default function (params) {
   }
 
   const level = getLevel(id);
-  if (!level) {
+  if (!level.level) {
     app.append(
       Div({
         text: 'Level not found',
@@ -180,5 +226,5 @@ export default function (params) {
     return;
   }
 
-  startGame(level.g);
+  startGame(level);
 }

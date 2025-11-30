@@ -1,4 +1,4 @@
-import { PATH } from './constants.js';
+import { PATH } from './constants/index.js';
 import { initModal } from './features/modal.js';
 import { navTo, parseHash } from './utils/navigation.js';
 
