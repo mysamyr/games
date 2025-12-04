@@ -1,88 +1,105 @@
 import { navTo } from '../utils/navigation.js';
-import { PATH, LEVEL_TYPE } from '../constants/index.js';
+import { LEVEL_TYPE, PATH } from '../constants/index.js';
 import { deleteCustomLevel, listAllLevels } from '../store/index.js';
 import { Button, Div, Header, Span } from '../components/index.js';
+import { getLevelName, getLevelSize } from '../features/maze.js';
+import Modal from '../features/modal.js';
 
 const app = document.getElementById('app');
 
 const onDeleteLevel = idx => {
-  // todo better confirmation modal
-  if (confirm('Delete this custom maze?')) {
+  const onConfirm = () => {
     deleteCustomLevel(idx);
     location.reload();
-  }
+  };
+  Modal.show(
+    Div({
+      className: 'modal-content',
+      children: [
+        Header({ lvl: 3, text: 'Delete this custom maze?' }),
+        Div({
+          className: 'modal-buttons',
+          children: [
+            Button({
+              text: 'Cancel',
+              onClick: () => Modal.hide(),
+            }),
+            Button({
+              className: 'red',
+              text: 'Delete',
+              onClick: onConfirm,
+            }),
+          ],
+        }),
+      ],
+    })
+  );
 };
 
-const makePredefinedSection = arr => {
-  const container = Div();
-  const sect = Div({
-    className: 'default-level-section',
-  });
-  arr.forEach((lvl, idx) => {
-    sect.appendChild(
+const makePredefinedSection = lvls =>
+  Div({
+    children: [
+      Header({
+        lvl: 3,
+        text: 'Default levels:',
+      }),
       Div({
-        children: [
-          Button({
-            text: `Level ${lvl.n}`,
-            onClick: () =>
-              navTo(`${PATH.GAME}?id=${LEVEL_TYPE.PREDEFINED}-${idx}`),
-          }),
-        ],
-      })
-    );
+        className: 'default-level-section',
+        children: lvls.map((lvl, idx) =>
+          Div({
+            className: 'level-item',
+            children: [
+              Button({
+                text: `Level ${getLevelName(lvl)}`,
+                onClick: () =>
+                  navTo(`${PATH.GAME}?id=${LEVEL_TYPE.PREDEFINED}-${idx}`),
+              }),
+            ],
+          })
+        ),
+      }),
+    ],
   });
-  container.append(
-    Header({
-      lvl: 3,
-      text: 'Default levels:',
-    }),
-    sect
-  );
-  return container;
-};
 
-const makeCustomSection = arr => {
-  const container = Div();
-  const sect = Div({
-    className: 'custom-level-section',
-  });
-  arr.forEach((lvl, idx) => {
-    sect.appendChild(
+const makeCustomSection = lvls =>
+  Div({
+    children: [
+      Header({
+        lvl: 3,
+        text: 'Custom levels:',
+      }),
       Div({
-        className: 'level-item',
-        children: [
-          Span({ text: lvl.n }),
-          Button({
-            text: 'Play',
-            onClick: () => navTo(`${PATH.GAME}?id=${LEVEL_TYPE.CUSTOM}-${idx}`),
-          }),
-          Button({
-            className: 'edit',
-            text: 'Edit',
-            onClick: () =>
-              navTo(`${PATH.EDITOR}?id=${LEVEL_TYPE.CUSTOM}-${idx}`),
-          }),
-          Button({
-            className: 'delete',
-            text: '✕',
-            title: 'Delete',
-            onClick: () => {
-              onDeleteLevel(idx);
-            },
-          }),
-        ],
-      })
-    );
+        className: 'custom-level-section',
+        children: lvls.map((lvl, idx) =>
+          Div({
+            className: 'level-item',
+            children: [
+              Span({
+                text: `${getLevelName(lvl)} ${getLevelSize(lvl).join(' x ')}`,
+              }),
+              Button({
+                text: 'Play',
+                onClick: () =>
+                  navTo(`${PATH.GAME}?id=${LEVEL_TYPE.CUSTOM}-${idx}`),
+              }),
+              Button({
+                className: 'edit',
+                text: 'Edit',
+                onClick: () =>
+                  navTo(`${PATH.EDITOR}?id=${LEVEL_TYPE.CUSTOM}-${idx}`),
+              }),
+              Button({
+                className: 'red',
+                text: '✕',
+                title: 'Delete',
+                onClick: () => onDeleteLevel(idx),
+              }),
+            ],
+          })
+        ),
+      }),
+    ],
   });
-  container.append(
-    Header({
-      lvl: 3,
-      text: 'Custom levels:',
-    }),
-    sect
-  );
-  return container;
-};
 
 export default function () {
   const { predefined, custom } = listAllLevels();
@@ -92,8 +109,7 @@ export default function () {
     className: 'header',
   });
 
-  const controls = Div({
-    className: 'menu-controls',
+  const buttons = Div({
     children: [
       Button({
         text: 'Create custom maze',
@@ -107,5 +123,5 @@ export default function () {
     children: [makePredefinedSection(predefined), makeCustomSection(custom)],
   });
 
-  app.append(header, list, controls);
+  app.append(header, list, buttons);
 }

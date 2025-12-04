@@ -1,3 +1,11 @@
+export function getLevelName(level) {
+  return level?.n || '';
+}
+
+export function getLevelSize(level) {
+  return [level?.g?.at(0), level?.g?.at(1)];
+}
+
 export function encodeLevel({ boardWidth, boardHeight, boardConfig }) {
   const out = [boardWidth, boardHeight];
   for (let column = 0; column < boardHeight; column++) {

@@ -1,6 +1,6 @@
 import { PATH } from './constants/index.js';
-import { initModal } from './features/modal.js';
-import { navTo, parseHash } from './utils/navigation.js';
+import { parseHash } from './utils/navigation.js';
+import Modal from './features/modal.js';
 
 import MainPage from './pages/main.js';
 import GamePage from './pages/game.js';
@@ -8,9 +8,14 @@ import EditorPage from './pages/editor.js';
 
 const app = document.getElementById('app');
 
-function router() {
-  const { path, params } = parseHash();
+function clearPage() {
   app.innerHTML = '';
+  Modal.hide();
+}
+
+function router() {
+  clearPage();
+  const { path, params } = parseHash();
   switch (path) {
     case PATH.GAME:
       GamePage(params);
@@ -23,10 +28,5 @@ function router() {
   }
 }
 
-initModal();
-
 window.addEventListener('hashchange', router);
 window.addEventListener('load', router);
-
-// expose nav for debugging
-window.escaperNav = navTo;

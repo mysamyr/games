@@ -1,30 +1,43 @@
-export const initModal = () => {
-  const dialog = document.querySelector('dialog');
-  dialog.addEventListener('close', e => {
-    e.target.innerHTML = '';
-  });
-  dialog.addEventListener('click', e => {
-    const dialogDimensions = dialog.getBoundingClientRect();
-    if (
-      e.clientX < dialogDimensions.left ||
-      e.clientX > dialogDimensions.right ||
-      e.clientY < dialogDimensions.top ||
-      e.clientY > dialogDimensions.bottom
-    ) {
-      dialog.close();
+class Modal {
+  constructor() {
+    this.dialog = document.querySelector('dialog');
+    if (!this.dialog) {
+      throw new Error('Dialog element not found');
     }
-  });
-};
+    this.dialog.addEventListener('close', this._onClose.bind(this));
+    this.dialog.addEventListener('click', this._onClick.bind(this));
+  }
 
-export const showModal = modal => {
-  const dialog = document.querySelector('dialog');
-  dialog.innerText = '';
-  dialog.appendChild(modal);
-  dialog.showModal();
-};
+  _onClose(e) {
+    e.target.innerHTML = '';
+  }
 
-export const hideModal = () => {
-  const dialog = document.querySelector('dialog');
-  dialog.innerText = '';
-  dialog.close();
-};
+  _onClick(e) {
+    const rect = this.dialog.getBoundingClientRect();
+    if (
+      e.clientX < rect.left ||
+      e.clientX > rect.right ||
+      e.clientY < rect.top ||
+      e.clientY > rect.bottom
+    ) {
+      this.dialog.close();
+    }
+  }
+
+  /*
+   * Show a modal dialog with the given content.
+   * @param {HTMLElement} modal - The content to display inside the modal dialog.
+   */
+  show(modal) {
+    this.dialog.innerText = '';
+    this.dialog.appendChild(modal);
+    this.dialog.showModal();
+  }
+
+  hide() {
+    this.dialog.innerText = '';
+    this.dialog.close();
+  }
+}
+
+export default new Modal();

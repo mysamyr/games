@@ -4,14 +4,14 @@ import {
   LEVEL_SIZE,
 } from '../constants/index.js';
 import { Button, Div, Input, Paragraph, Span } from '../components/index.js';
-import { decodeLevel, encodeLevel } from '../features/maze.js';
+import { decodeLevel, encodeLevel, getLevelName } from '../features/maze.js';
 import { isSolvable } from '../features/validator.js';
-import { showModal } from '../features/modal.js';
+import Modal from '../features/modal.js';
+import Snackbar from '../features/snackbar.js';
 import { getBoard } from '../features/ui.js';
 import { saveCustomLevel, updateCustomLevel } from '../store/index.js';
 import { navTo } from '../utils/navigation.js';
 import { getLevel } from '../utils/helpers.js';
-import Snackbar from '../features/snackbar.js';
 
 const app = document.getElementById('app');
 
@@ -85,10 +85,10 @@ function openEditor(level, idx) {
     const solvable = isSolvable(decodedLevel);
     if (solvable) {
       info.textContent = EDITOR_INFO_MESSAGE.SOLVABLE;
-      info.classList.remove('red');
+      info.style.color = '';
     } else {
       info.textContent = EDITOR_INFO_MESSAGE.UNSOLVABLE;
-      info.classList.add('red');
+      info.style.color = 'var(--red)';
     }
   }
 
@@ -118,7 +118,7 @@ function openEditor(level, idx) {
 
   const nameInput = Input({
     placeholder: 'Level name',
-    value: level?.n || '',
+    value: getLevelName(level),
   });
   const info = Div({
     className: 'editor-info',
@@ -238,7 +238,7 @@ function openEditor(level, idx) {
       Button({
         text: 'Show seed',
         onClick: () =>
-          showModal(Paragraph({ text: encodeLevel(decodedLevel).join('') })),
+          Modal.show(Paragraph({ text: encodeLevel(decodedLevel).join('') })),
       }),
     ],
   });

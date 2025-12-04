@@ -1,5 +1,5 @@
 import { Button, Div, Header, Paragraph } from '../components/index.js';
-import { decodeLevel } from '../features/maze.js';
+import { decodeLevel, getLevelName } from '../features/maze.js';
 import { clearBoard, getBoard, markPlayer } from '../features/ui.js';
 import { navTo } from '../utils/navigation.js';
 import { GAME_STATUS_MESSAGE, LEVEL_TYPE, PATH } from '../constants/index.js';
@@ -140,8 +140,6 @@ function startGame({ level, idx, kind }) {
 
   function onClickMenu() {
     window.removeEventListener('keydown', keyHandler);
-    board.classList.remove('escaper-win');
-    status.classList.remove('escaper-win');
     document.querySelectorAll('.escaper-confetti').forEach(n => n.remove());
     navTo();
   }
@@ -175,7 +173,7 @@ function startGame({ level, idx, kind }) {
       if (hasPrevLevel(idx)) {
         navigationButtons.appendChild(
           Button({
-            className: 'level-navigation-button',
+            className: 'orange',
             text: 'Prev Level',
             onClick: onClickPrevLevel,
           })
@@ -185,7 +183,7 @@ function startGame({ level, idx, kind }) {
         // todo is level was completed
         navigationButtons.appendChild(
           Button({
-            className: 'level-navigation-button',
+            className: 'orange',
             text: 'Next Level',
             onClick: onClickNextLevel,
           })
@@ -203,7 +201,7 @@ function startGame({ level, idx, kind }) {
 
   app.append(
     Header({
-      text: `Level: ${level.n}`,
+      text: `Level: ${getLevelName(level)}`,
     }),
     status,
     board,
@@ -216,7 +214,7 @@ function startGame({ level, idx, kind }) {
 export default function (params) {
   const id = params.get('id');
   if (!id) {
-    navTo(PATH.HOME);
+    navTo();
     return;
   }
 
