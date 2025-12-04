@@ -1,8 +1,13 @@
-import { DEFAULT_LEVEL_SIZE, EDITOR_INFO_MESSAGE } from '../constants/index.js';
-import { Button, Div, Input, Span } from '../components/index.js';
-import { decodeLevel, encodeCompact } from '../features/maze.js';
+import {
+  DEFAULT_LEVEL_SIZE,
+  EDITOR_INFO_MESSAGE,
+  LEVEL_SIZE,
+} from '../constants/index.js';
+import { Button, Div, Input, Paragraph, Span } from '../components/index.js';
+import { decodeLevel, encodeLevel } from '../features/maze.js';
 import { isSolvable } from '../features/validator.js';
-import { clearBoard, getBoard } from '../features/ui.js';
+import { showModal } from '../features/modal.js';
+import { getBoard } from '../features/ui.js';
 import { saveCustomLevel, updateCustomLevel } from '../store/index.js';
 import { navTo } from '../utils/navigation.js';
 import { getLevel } from '../utils/helpers.js';
@@ -47,7 +52,6 @@ function addDownWall({ decodedLevel, column, row, cell }) {
 }
 
 function openEditor(level, idx) {
-  clearBoard(app);
   const decodedLevel = level
     ? decodeLevel(level.g)
     : {
@@ -98,7 +102,7 @@ function openEditor(level, idx) {
       Snackbar.displayMsg('Level is unsolvable');
       return;
     }
-    const encodedLevel = encodeCompact(decodedLevel);
+    const encodedLevel = encodeLevel(decodedLevel);
     const lvl = { n: nameInput.value, g: encodedLevel };
     if (level && !isNaN(idx)) {
       updateCustomLevel(idx, lvl);
@@ -133,7 +137,8 @@ function openEditor(level, idx) {
 
   function onChangeWidth(e) {
     const val = parseInt(e.target.value, 10);
-    if (isNaN(val) || val < 1) return;
+    if (isNaN(val) || val < LEVEL_SIZE.MIN_WIDTH || val > LEVEL_SIZE.MAX_WIDTH)
+      return;
     const oldW = decodedLevel.boardWidth;
     const newW = val;
     if (newW === oldW) return;
@@ -157,8 +162,12 @@ function openEditor(level, idx) {
 
   function onChangeHeight(e) {
     const val = parseInt(e.target.value, 10);
-    if (isNaN(val) || val < 1) return;
-    const w = decodedLevel.boardWidth;
+    if (
+      isNaN(val) ||
+      val < LEVEL_SIZE.MIN_HEIGHT ||
+      val > LEVEL_SIZE.MAX_HEIGHT
+    )
+      return;
     const oldH = decodedLevel.boardHeight;
     const newH = val;
     if (newH === oldH) return;
@@ -166,7 +175,7 @@ function openEditor(level, idx) {
       // add columns
       for (let c = oldH; c < newH; c++) {
         decodedLevel.boardConfig.push(
-          Array.from({ length: w }, () => [false, false])
+          Array.from({ length: decodedLevel.boardWidth }, () => [false, false])
         );
       }
     } else {
@@ -174,6 +183,14 @@ function openEditor(level, idx) {
       decodedLevel.boardConfig = decodedLevel.boardConfig.slice(0, newH);
     }
     decodedLevel.boardHeight = newH;
+    renderBoard();
+  }
+
+  function onClickReset() {
+    decodedLevel.boardConfig = decodedLevel.boardConfig.map(col =>
+      col.map(() => [false, false])
+    );
+
     renderBoard();
   }
 
@@ -187,7 +204,8 @@ function openEditor(level, idx) {
       Input({
         type: 'number',
         value: decodedLevel.boardWidth,
-        min: 1,
+        min: LEVEL_SIZE.MIN_WIDTH,
+        max: LEVEL_SIZE.MAX_WIDTH,
         onChange: onChangeWidth,
       }),
       Span({
@@ -196,7 +214,8 @@ function openEditor(level, idx) {
       Input({
         type: 'number',
         value: decodedLevel.boardHeight,
-        min: 1,
+        min: LEVEL_SIZE.MIN_HEIGHT,
+        max: LEVEL_SIZE.MAX_HEIGHT,
         onChange: onChangeHeight,
       }),
     ],
@@ -211,6 +230,15 @@ function openEditor(level, idx) {
       Button({
         text: 'Menu',
         onClick: () => navTo(),
+      }),
+      Button({
+        text: 'Reset',
+        onClick: onClickReset,
+      }),
+      Button({
+        text: 'Show seed',
+        onClick: () =>
+          showModal(Paragraph({ text: encodeLevel(decodedLevel).join('') })),
       }),
     ],
   });

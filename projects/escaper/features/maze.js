@@ -1,4 +1,4 @@
-export function encodeCompact({ boardWidth, boardHeight, boardConfig }) {
+export function encodeLevel({ boardWidth, boardHeight, boardConfig }) {
   const out = [boardWidth, boardHeight];
   for (let column = 0; column < boardHeight; column++) {
     for (let row = 0; row < boardWidth; row++) {

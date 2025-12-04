@@ -23,3 +23,10 @@ export const DEFAULT_LEVEL_SIZE = {
   WIDTH: 3,
   HEIGHT: 3,
 };
+
+export const LEVEL_SIZE = {
+  MIN_WIDTH: 2,
+  MIN_HEIGHT: 2,
+  MAX_WIDTH: 24,
+  MAX_HEIGHT: 24,
+};

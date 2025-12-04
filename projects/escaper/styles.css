@@ -276,6 +276,19 @@ body {
   padding: 8px;
 }
 
+/*DIALOG*/
+dialog:modal {
+  margin: auto;
+  color: var(--black);
+  background-color: var(--white);
+  border: none;
+  border-radius: 5px;
+}
+
+dialog::backdrop {
+  background-color: hsla(0, 0%, 0%, 0.5);
+}
+
 button {
   cursor: pointer;
   padding: 6px 12px;
