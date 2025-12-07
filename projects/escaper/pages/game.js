@@ -1,75 +1,26 @@
 import { Button, Div, Header, Paragraph } from '../components/index.js';
 import { decodeLevel, getLevelName } from '../features/maze.js';
-import { clearBoard, getBoard, markPlayer } from '../features/ui.js';
+import {
+  clearWinAnimation,
+  getBoard,
+  markPlayer,
+  playWinAnimation,
+} from '../features/ui.js';
 import { navTo } from '../utils/navigation.js';
 import { GAME_STATUS_MESSAGE, LEVEL_TYPE, PATH } from '../constants/index.js';
-import { hasNextLevel, hasPrevLevel } from '../store/index.js';
+import {
+  hasNextLevel,
+  hasPrevLevel,
+  markLevelCompleted,
+} from '../store/index.js';
 import { getLevel } from '../utils/helpers.js';
 
 const app = document.getElementById('app');
 
-function createConfettiPieces(count = 24, minMs = 5000, maxMs = 10000) {
-  const pieces = [];
-  const rect = app.getBoundingClientRect();
-  const globalLeft = rect.left + window.scrollX;
-  const globalTop = rect.top + window.scrollY;
-  for (let i = 0; i < count; i++) {
-    const duration = Math.round(Math.random() * (maxMs - minMs) + minMs);
-    const delay = Math.round(Math.random() * 500);
-    const left = globalLeft + Math.random() * rect.width;
-    // start slightly above the board so pieces visibly fall down it
-    const startTop = globalTop - Math.round(Math.random() * 40 + 30);
-
-    const el = Div({
-      className: 'escaper-confetti',
-      style: {
-        left: `${left}px`,
-        top: `${startTop}px`,
-        background: `hsl(${Math.round(Math.random() * 360)}, 80%, 60%)`,
-        transform: `rotate(${Math.random() * 360}deg)`,
-        zIndex: '9',
-        animationDuration: `${duration}ms, ${duration}ms`,
-        animationDelay: `${delay}ms, ${delay}ms`,
-      },
-    });
-    const rot = Math.round(Math.random() * 360);
-    el.style.setProperty('--start-rot', `${rot}deg`);
-
-    pieces.push(el);
-  }
-  return pieces;
-}
-
-function playWinAnimation(boardEl, statusEl) {
-  boardEl.classList.add('escaper-win');
-  statusEl.classList.add('escaper-win');
-
-  const confetti = createConfettiPieces(30);
-  confetti.forEach(c => {
-    app.appendChild(c);
-  });
-
-  // compute the longest animation duration (first value before comma)
-  const maxDuration = confetti.reduce((max, el) => {
-    const dur = el.style.animationDuration || '';
-    const first = dur.split(',')[0].trim(); // e.g. "6000ms"
-    const n = parseFloat(first) || 0;
-    return Math.max(max, n);
-  }, 0);
-
-  const cleanupAfter = maxDuration + 500;
-
-  setTimeout(() => {
-    confetti.forEach(c => c.remove());
-    boardEl.classList.remove('escaper-win');
-  }, cleanupAfter);
-}
-
 function startGame({ level, idx, kind }) {
-  clearBoard(app);
   const decodedLevel = decodeLevel(level.g);
-  let player = { x: 0, y: 0 };
   const board = getBoard(decodedLevel);
+  let player = { x: 0, y: 0 };
   markPlayer(board, 0, 0);
 
   function keyHandler(e) {
@@ -110,20 +61,38 @@ function startGame({ level, idx, kind }) {
     );
   }
 
+  function movePlayer(newY, newX) {
+    player.x = newX;
+    player.y = newY;
+    markPlayer(board, newY, newX);
+  }
+
+  function unlockNextLevel() {
+    if (level.c) return; // already completed
+    markLevelCompleted(idx);
+    const nextLevelBtn = document.getElementById('next-level-btn');
+    if (nextLevelBtn) {
+      nextLevelBtn.disabled = false;
+    }
+  }
+
+  function onWin() {
+    status.textContent =
+      kind === LEVEL_TYPE.PREDEFINED && !hasNextLevel(idx)
+        ? GAME_STATUS_MESSAGE.ESCAPED_LAST
+        : GAME_STATUS_MESSAGE.ESCAPED;
+    window.removeEventListener('keydown', keyHandler);
+    playWinAnimation(board, status);
+    unlockNextLevel();
+  }
+
   function move(newY, newX) {
     const toRow = player.y + newY;
     const toColumn = player.x + newX;
     if (!canMove(toRow, toColumn)) return;
-    player.x = toColumn;
-    player.y = toRow;
-    markPlayer(board, toRow, toColumn);
+    movePlayer(toRow, toColumn);
     if (isFinished()) {
-      status.textContent =
-        kind === LEVEL_TYPE.PREDEFINED && !hasNextLevel(idx)
-          ? GAME_STATUS_MESSAGE.ESCAPED_LAST
-          : GAME_STATUS_MESSAGE.ESCAPED;
-      window.removeEventListener('keydown', keyHandler);
-      playWinAnimation(board, status);
+      onWin();
     }
   }
 
@@ -131,16 +100,13 @@ function startGame({ level, idx, kind }) {
     player = { x: 0, y: 0 };
     markPlayer(board, 0, 0);
     status.textContent = '';
-    board.classList.remove('escaper-win');
-    status.classList.remove('escaper-win');
-    document.querySelectorAll('.escaper-confetti').forEach(n => n.remove());
-    window.removeEventListener('keydown', keyHandler);
+    clearWinAnimation(board, status);
+    // reattach in case it was removed on win
     window.addEventListener('keydown', keyHandler);
   }
 
   function onClickMenu() {
     window.removeEventListener('keydown', keyHandler);
-    document.querySelectorAll('.escaper-confetti').forEach(n => n.remove());
     navTo();
   }
 
@@ -156,18 +122,21 @@ function startGame({ level, idx, kind }) {
 
   function getControlsSection() {
     const controls = Div({
-      className: 'game-controls',
+      className: 'column',
       children: [
-        Button({ text: 'Restart', onClick: onRestart }),
-        Button({ text: 'Menu', onClick: onClickMenu }),
+        Div({
+          className: 'row',
+          children: [
+            Button({ text: 'Restart', onClick: onRestart }),
+            Button({ text: 'Menu', onClick: onClickMenu }),
+          ],
+        }),
       ],
     });
 
-    // wrap buttns in a row div for better styling
-
     if (kind === LEVEL_TYPE.PREDEFINED) {
       const navigationButtons = Div({
-        className: 'controls-row',
+        className: 'row',
       });
 
       if (hasPrevLevel(idx)) {
@@ -180,11 +149,12 @@ function startGame({ level, idx, kind }) {
         );
       }
       if (hasNextLevel(idx)) {
-        // todo is level was completed
         navigationButtons.appendChild(
           Button({
+            id: 'next-level-btn',
             className: 'orange',
             text: 'Next Level',
+            disabled: !level.c,
             onClick: onClickNextLevel,
           })
         );
@@ -196,7 +166,7 @@ function startGame({ level, idx, kind }) {
   }
 
   const status = Paragraph({
-    className: 'game-status',
+    className: 'info',
   });
 
   app.append(
@@ -219,7 +189,7 @@ export default function (params) {
   }
 
   const level = getLevel(id);
-  if (!level.level) {
+  if (!level) {
     app.append(
       Div({
         text: 'Level not found',

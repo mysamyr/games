@@ -46,15 +46,11 @@ const makePredefinedSection = lvls =>
       Div({
         className: 'default-level-section',
         children: lvls.map((lvl, idx) =>
-          Div({
-            className: 'level-item',
-            children: [
-              Button({
-                text: `Level ${getLevelName(lvl)}`,
-                onClick: () =>
-                  navTo(`${PATH.GAME}?id=${LEVEL_TYPE.PREDEFINED}-${idx}`),
-              }),
-            ],
+          Button({
+            text: `Level ${getLevelName(lvl)}`,
+            disabled: idx && !lvls[idx - 1].c, // lock if previous not completed (except first)
+            onClick: () =>
+              navTo(`${PATH.GAME}?id=${LEVEL_TYPE.PREDEFINED}-${idx}`),
           })
         ),
       }),
@@ -83,7 +79,7 @@ const makeCustomSection = lvls =>
                   navTo(`${PATH.GAME}?id=${LEVEL_TYPE.CUSTOM}-${idx}`),
               }),
               Button({
-                className: 'edit',
+                className: 'orange',
                 text: 'Edit',
                 onClick: () =>
                   navTo(`${PATH.EDITOR}?id=${LEVEL_TYPE.CUSTOM}-${idx}`),
@@ -104,24 +100,22 @@ const makeCustomSection = lvls =>
 export default function () {
   const { predefined, custom } = listAllLevels();
 
-  const header = Header({
-    text: 'Escaper',
-    className: 'header',
-  });
-
-  const buttons = Div({
-    children: [
-      Button({
-        text: 'Create custom maze',
-        onClick: () => navTo(PATH.EDITOR),
-      }),
-    ],
-  });
-
-  const list = Div({
-    className: 'levels-list',
-    children: [makePredefinedSection(predefined), makeCustomSection(custom)],
-  });
-
-  app.append(header, list, buttons);
+  app.append(
+    Header({
+      lvl: 1,
+      text: 'Escaper',
+    }),
+    Div({
+      className: 'levels-list',
+      children: [makePredefinedSection(predefined), makeCustomSection(custom)],
+    }),
+    Div({
+      children: [
+        Button({
+          text: 'Create custom maze',
+          onClick: () => navTo(PATH.EDITOR),
+        }),
+      ],
+    })
+  );
 }

@@ -30,3 +30,13 @@ export const LEVEL_SIZE = {
   MAX_WIDTH: 24,
   MAX_HEIGHT: 24,
 };
+
+export const CUSTOM_LEVEL_NAME = {
+  MAX_LENGTH: 20,
+  MIN_LENGTH: 3,
+};
+
+export const CONFETTI_PIECE_COUNT = 30;
+
+export const STORAGE_LEVELS_KEY = 'escaper:levels:v1';
+export const STORAGE_PROGRESS_KEY = 'escaper:progress:v1';

@@ -6,9 +6,11 @@
   --bg-color: #f6f8fa;
   --white: #fff;
   --black: #111;
+  --grey: #777;
   --green: #388e3c;
   --yellow: #ffd600;
   --orange: #ff8a00;
+  --deep-pink: #e52e71;
 }
 
 * {
@@ -24,6 +26,35 @@ body {
   color: var(--black);
 }
 
+h1 {
+  margin-bottom: 12px;
+  font-size: 28px;
+}
+
+button {
+  cursor: pointer;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  background: var(--black);
+  color: var(--white);
+  font-size: 14px;
+}
+
+button:disabled {
+  background: var(--grey);
+  cursor: not-allowed;
+}
+
+input {
+  padding: 6px;
+  max-width: 200px;
+}
+
+input[type='number'] {
+  max-width: 50px;
+}
+
 #app {
   max-width: 900px;
   margin: 0 auto;
@@ -33,14 +64,7 @@ body {
   align-items: center;
 }
 
-.header {
-  margin-bottom: 12px;
-}
-
-.header h1 {
-  font-size: 28px;
-}
-
+/* MAIN PAGE */
 .levels-list {
   display: flex;
   gap: 24px;
@@ -69,18 +93,10 @@ body {
   display: flex;
   gap: 8px;
   align-items: center;
-  padding: 6px 0;
+  padding: 6px;
 }
 
-.level-item button {
-  padding: 4px 8px;
-}
-
-.level-item .edit {
-  background: var(--yellow);
-  color: var(--black);
-}
-
+/* BOARD */
 .maze-board {
   width: fit-content;
   display: grid;
@@ -145,29 +161,24 @@ body {
   z-index: 1;
 }
 
-.game-controls,
-.editor-controls {
-  margin: 12px 0;
+/* GAME PAGE */
+.column {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   gap: 8px;
 }
 
-.controls-row {
+.row {
   display: flex;
+  flex-direction: row;
+  align-items: center;
   gap: 8px;
 }
 
-.game-status {
-  margin: 8px 0;
-  font-weight: 600;
-}
-
-.editor-info {
+.info {
   font-size: 14px;
-  color: var(--green);
+  font-weight: 600;
 }
 
 /* Win pulse/glow */
@@ -176,10 +187,10 @@ body {
   transform-origin: center;
 }
 
-.game-status.escaper-win {
+.info.escaper-win {
   animation: escaper-status-pop 700ms ease-out 1;
   color: var(--white);
-  background: linear-gradient(90deg, #ff8a00, #e52e71);
+  background: linear-gradient(90deg, var(--orange), var(--deep-pink));
   padding: 8px 12px;
   border-radius: 6px;
   box-shadow: 0 6px 20px rgba(229, 46, 113, 0.25);
@@ -237,7 +248,12 @@ body {
   }
 }
 
-/* Snackbar */
+/* EDITOR PAGE */
+.help-btn {
+  border-radius: 50%;
+}
+
+/* SNACKBAR */
 .snackbar-container {
   position: fixed;
   bottom: 5%;
@@ -266,7 +282,7 @@ body {
   padding: 8px;
 }
 
-/*DIALOG*/
+/* MODAL DIALOG */
 dialog:modal {
   margin: auto;
   color: var(--black);
@@ -293,23 +309,10 @@ dialog::backdrop {
   gap: 12px;
 }
 
-button {
-  cursor: pointer;
-  padding: 6px 12px;
-  border: none;
-  border-radius: 4px;
-  background: var(--black);
+/* COLOR CLASSES */
+.green {
+  background: var(--green);
   color: var(--white);
-  font-size: 14px;
-}
-
-input {
-  padding: 6px;
-  max-width: 200px;
-}
-
-input[type='number'] {
-  max-width: 50px;
 }
 
 .red {
@@ -320,4 +323,9 @@ input[type='number'] {
 .orange {
   background: var(--orange);
   color: var(--black);
+}
+
+.grey {
+  background: var(--grey);
+  color: var(--white);
 }
