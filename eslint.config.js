@@ -16,6 +16,7 @@ export default [
       'assets',
       '.prettierignore',
       '.prettierrc',
+      'projects/*/dist'
     ],
   },
   ...compat.extends('eslint:recommended', 'prettier'),

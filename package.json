@@ -5,15 +5,20 @@
   "license": "ISC",
   "description": "Games made by Mysamyr",
   "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "docker": "docker run -p 80:80 .",
     "format": "prettier --write ./projects",
     "check-quality": "eslint ./projects",
+    "build:escaper": "cd projects/escaper && node esbuild.mjs",
     "prepare": "husky"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.39.1",
+    "esbuild": "^0.27.1",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^16.5.0",
