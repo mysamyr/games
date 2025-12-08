@@ -89,12 +89,18 @@ export function hasPrevLevel(currIdx) {
   return currIdx > 0;
 }
 
+export function hasNextLevel(currIdx) {
+  return currIdx < predefined.length - 1;
+}
+
+export function isPrevLevelCompleted(currIdx) {
+  if (currIdx === 0) return true;
+  const progress = loadProgress();
+  return !!progress[currIdx - 1];
+}
+
 export function markLevelCompleted(idx) {
   const progress = loadProgress();
   progress[idx] = true;
   saveProgress(progress);
-}
-
-export function hasNextLevel(currIdx) {
-  return currIdx < predefined.length - 1;
 }

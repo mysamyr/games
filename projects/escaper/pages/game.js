@@ -11,17 +11,40 @@ import { GAME_STATUS_MESSAGE, LEVEL_TYPE, PATH } from '../constants/index.js';
 import {
   hasNextLevel,
   hasPrevLevel,
+  isPrevLevelCompleted,
   markLevelCompleted,
 } from '../store/index.js';
-import { getLevel } from '../utils/helpers.js';
+import { parseLevelDataFromQuery } from '../utils/helpers.js';
+import Snackbar from '../features/snackbar.js';
 
 const app = document.getElementById('app');
+
+function userHasAccessToLevel(level) {
+  if (level.kind !== LEVEL_TYPE.PREDEFINED || !level.idx) return true;
+  return !!isPrevLevelCompleted(level.idx);
+}
 
 function startGame({ level, idx, kind }) {
   const decodedLevel = decodeLevel(level.g);
   const board = getBoard(decodedLevel);
   let player = { x: 0, y: 0 };
-  markPlayer(board, 0, 0);
+  const status = Paragraph({
+    className: 'info',
+  });
+
+  function detachListeners() {
+    window.removeEventListener('keydown', keyHandler);
+    window.removeEventListener('popstate', onPopState);
+  }
+
+  function attachListeners() {
+    window.addEventListener('keydown', keyHandler);
+    window.addEventListener('popstate', onPopState);
+  }
+
+  function onPopState() {
+    detachListeners();
+  }
 
   function keyHandler(e) {
     if (e.key === 'ArrowUp' || e.key === 'w') move(-1, 0);
@@ -81,7 +104,7 @@ function startGame({ level, idx, kind }) {
       kind === LEVEL_TYPE.PREDEFINED && !hasNextLevel(idx)
         ? GAME_STATUS_MESSAGE.ESCAPED_LAST
         : GAME_STATUS_MESSAGE.ESCAPED;
-    window.removeEventListener('keydown', keyHandler);
+    detachListeners();
     playWinAnimation(board, status);
     unlockNextLevel();
   }
@@ -102,21 +125,21 @@ function startGame({ level, idx, kind }) {
     status.textContent = '';
     clearWinAnimation(board, status);
     // reattach in case it was removed on win
-    window.addEventListener('keydown', keyHandler);
+    attachListeners();
   }
 
   function onClickMenu() {
-    window.removeEventListener('keydown', keyHandler);
+    detachListeners();
     navTo();
   }
 
   function onClickPrevLevel() {
-    window.removeEventListener('keydown', keyHandler);
+    detachListeners();
     navTo(`${PATH.GAME}?id=${LEVEL_TYPE.PREDEFINED}-${idx - 1}`);
   }
 
   function onClickNextLevel() {
-    window.removeEventListener('keydown', keyHandler);
+    detachListeners();
     navTo(`${PATH.GAME}?id=${LEVEL_TYPE.PREDEFINED}-${idx + 1}`);
   }
 
@@ -165,10 +188,6 @@ function startGame({ level, idx, kind }) {
     return controls;
   }
 
-  const status = Paragraph({
-    className: 'info',
-  });
-
   app.append(
     Header({
       text: `Level: ${getLevelName(level)}`,
@@ -178,7 +197,8 @@ function startGame({ level, idx, kind }) {
     getControlsSection()
   );
 
-  window.addEventListener('keydown', keyHandler);
+  markPlayer(board, 0, 0);
+  attachListeners();
 }
 
 export default function (params) {
@@ -188,7 +208,7 @@ export default function (params) {
     return;
   }
 
-  const level = getLevel(id);
+  const level = parseLevelDataFromQuery(id);
   if (!level) {
     app.append(
       Div({
@@ -199,6 +219,13 @@ export default function (params) {
         onClick: () => navTo(),
       })
     );
+    return;
+  }
+  if (!userHasAccessToLevel(level)) {
+    Snackbar.displayMsg(
+      'This level is locked. Complete previous levels to unlock it.'
+    );
+    navTo();
     return;
   }
 

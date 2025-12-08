@@ -55,6 +55,10 @@ input[type='number'] {
   max-width: 50px;
 }
 
+.bold {
+  font-weight: 600;
+}
+
 #app {
   max-width: 900px;
   margin: 0 auto;
@@ -300,6 +304,7 @@ dialog::backdrop {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
   gap: 12px;
 }
 

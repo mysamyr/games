@@ -4,7 +4,11 @@ import { LEVEL_TYPE } from '../constants/index.js';
 // eslint-disable-next-line eqeqeq
 export const isNil = value => value == null; // null or undefined
 
-export const getLevel = id => {
+/** Parse level data from query parameter string
+ * @param {string} id - The level identifier in the format "kind-idx"
+ * @returns {{idx: Number, kind: String, level: {n: String, g: Number[], c: Boolean}}|null} An object containing idx, kind, and level data, or null if invalid
+ */
+export const parseLevelDataFromQuery = id => {
   if (isNil(id)) return null;
   const [kind, idxStr] = id.split('-');
   const idx = parseInt(idxStr, 10);
@@ -20,4 +24,5 @@ export const getLevel = id => {
   };
 };
 
+// Calculate the number of walls in a maze of size (x, y)
 export const getWallCount = (x, y) => 2 * x * y - (x + y);

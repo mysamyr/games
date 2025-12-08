@@ -57,8 +57,41 @@ const makePredefinedSection = lvls =>
     ],
   });
 
-const makeCustomSection = lvls =>
-  Div({
+const makeCustomSection = lvls => {
+  const levelsSection = lvls.length
+    ? lvls.map((lvl, idx) =>
+        Div({
+          className: 'level-item',
+          children: [
+            Span({
+              className: 'bold',
+              text: getLevelName(lvl),
+            }),
+            Span({
+              text: getLevelSize(lvl).join(' x '),
+            }),
+            Button({
+              text: 'Play',
+              onClick: () =>
+                navTo(`${PATH.GAME}?id=${LEVEL_TYPE.CUSTOM}-${idx}`),
+            }),
+            Button({
+              className: 'orange',
+              text: 'Edit',
+              onClick: () =>
+                navTo(`${PATH.EDITOR}?id=${LEVEL_TYPE.CUSTOM}-${idx}`),
+            }),
+            Button({
+              className: 'red',
+              text: '✕',
+              title: 'Delete',
+              onClick: () => onDeleteLevel(idx),
+            }),
+          ],
+        })
+      )
+    : [Span({ text: 'No custom levels created yet.' })];
+  return Div({
     children: [
       Header({
         lvl: 3,
@@ -66,36 +99,11 @@ const makeCustomSection = lvls =>
       }),
       Div({
         className: 'custom-level-section',
-        children: lvls.map((lvl, idx) =>
-          Div({
-            className: 'level-item',
-            children: [
-              Span({
-                text: `${getLevelName(lvl)} ${getLevelSize(lvl).join(' x ')}`,
-              }),
-              Button({
-                text: 'Play',
-                onClick: () =>
-                  navTo(`${PATH.GAME}?id=${LEVEL_TYPE.CUSTOM}-${idx}`),
-              }),
-              Button({
-                className: 'orange',
-                text: 'Edit',
-                onClick: () =>
-                  navTo(`${PATH.EDITOR}?id=${LEVEL_TYPE.CUSTOM}-${idx}`),
-              }),
-              Button({
-                className: 'red',
-                text: '✕',
-                title: 'Delete',
-                onClick: () => onDeleteLevel(idx),
-              }),
-            ],
-          })
-        ),
+        children: levelsSection,
       }),
     ],
   });
+};
 
 export default function () {
   const { predefined, custom } = listAllLevels();

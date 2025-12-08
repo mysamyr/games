@@ -12,14 +12,24 @@ import {
   Paragraph,
   Span,
 } from '../components/index.js';
-import { decodeLevel, encodeLevel, getLevelName } from '../features/maze.js';
-import { isSolvable } from '../features/validator.js';
+import {
+  decodeLevel,
+  encodeLevel,
+  getLevelArrayFromString,
+  getLevelName,
+  getLevelString,
+} from '../features/maze.js';
+import {
+  checkLevelName,
+  isSolvable,
+  validateLevelSeed,
+} from '../features/validator.js';
 import Modal from '../features/modal.js';
 import Snackbar from '../features/snackbar.js';
 import { getBoard } from '../features/ui.js';
 import { saveCustomLevel, updateCustomLevel } from '../store/index.js';
 import { navTo } from '../utils/navigation.js';
-import { getLevel } from '../utils/helpers.js';
+import { parseLevelDataFromQuery } from '../utils/helpers.js';
 
 const app = document.getElementById('app');
 
@@ -41,6 +51,20 @@ function openEditor(level, idx) {
     value: getLevelName(level),
     min: CUSTOM_LEVEL_NAME.MIN_LENGTH,
     max: CUSTOM_LEVEL_NAME.MAX_LENGTH,
+  });
+  const widthInput = Input({
+    type: 'number',
+    value: decodedLevel.boardWidth,
+    min: LEVEL_SIZE.MIN_WIDTH,
+    max: LEVEL_SIZE.MAX_WIDTH,
+    onChange: onChangeWidth,
+  });
+  const heightInput = Input({
+    type: 'number',
+    value: decodedLevel.boardHeight,
+    min: LEVEL_SIZE.MIN_HEIGHT,
+    max: LEVEL_SIZE.MAX_HEIGHT,
+    onChange: onChangeHeight,
   });
   const info = Div({
     className: 'info',
@@ -93,22 +117,10 @@ function openEditor(level, idx) {
     checkSolvability();
   }
 
-  function checkLevelName(name) {
-    if (!name) {
-      return 'Please enter a level name';
-    }
-    if (name.length < CUSTOM_LEVEL_NAME.MIN_LENGTH) {
-      return `Level name must be at least ${CUSTOM_LEVEL_NAME.MIN_LENGTH} characters long`;
-    }
-    if (name.length > CUSTOM_LEVEL_NAME.MAX_LENGTH) {
-      return `Level name must be at most ${CUSTOM_LEVEL_NAME.MAX_LENGTH} characters long`;
-    }
-  }
-
   function saveLevel(lvl) {
     try {
       saveCustomLevel(nameInput.value, lvl);
-      Snackbar.displayMsg(`Saved level ${nameInput.value}`);
+      Snackbar.displayMsg(`Saved level '${nameInput.value}'`);
     } catch (e) {
       Snackbar.displayMsg(e.message);
     }
@@ -117,7 +129,7 @@ function openEditor(level, idx) {
   function updateLevel(idx, lvl) {
     try {
       updateCustomLevel(idx, nameInput.value, lvl);
-      Snackbar.displayMsg(`Updated level ${nameInput.value}`);
+      Snackbar.displayMsg(`Updated level '${nameInput.value}'`);
     } catch (e) {
       Snackbar.displayMsg(e.message);
     }
@@ -147,9 +159,7 @@ function openEditor(level, idx) {
     board.replaceWith(newBoard);
     board = newBoard;
     board.addEventListener('click', onBoardClick);
-    info.textContent = isSolvable(decodedLevel)
-      ? EDITOR_INFO_MESSAGE.SOLVABLE
-      : EDITOR_INFO_MESSAGE.UNSOLVABLE;
+    checkSolvability();
   }
 
   function onChangeWidth(e) {
@@ -211,30 +221,85 @@ function openEditor(level, idx) {
     renderBoard();
   }
 
-  const buttons = Div({
-    className: 'row',
-    children: [
-      saveBtn,
-      Button({
-        text: 'Menu',
-        onClick: () => navTo(),
-      }),
-      Button({
-        text: 'Reset',
-        onClick: () => location.reload(),
-      }),
-      Button({
-        text: 'Clear',
-        onClick: onClickClearBoard,
-      }),
-      Button({
-        text: 'Show seed',
-        className: 'orange',
-        onClick: () =>
-          Modal.show(Paragraph({ text: encodeLevel(decodedLevel).join('') })),
-      }),
-    ],
-  });
+  function openSeedModal() {
+    const seedInput = Input({
+      type: 'text',
+      value: getLevelString(encodeLevel(decodedLevel)), // todo issue here !!!!
+      style: { width: '100%' },
+    });
+    const onSubmit = () => {
+      const { boardWidth, boardHeight, boardConfig } = decodeLevel(
+        getLevelArrayFromString(seedInput.value)
+      );
+      if (!validateLevelSeed(seedInput.value)) {
+        Snackbar.displayMsg('Invalid seed format');
+        return;
+      }
+      decodedLevel.boardWidth = boardWidth;
+      decodedLevel.boardHeight = boardHeight;
+      decodedLevel.boardConfig = boardConfig;
+      widthInput.value = boardWidth;
+      heightInput.value = boardHeight;
+      renderBoard();
+      checkSolvability();
+      Modal.hide();
+    };
+    Modal.show(
+      Div({
+        className: 'modal-content',
+        children: [
+          seedInput,
+          Div({
+            className: 'row',
+            children: [
+              Button({
+                text: 'Cancel',
+                onClick: () => Modal.hide(),
+              }),
+              Button({
+                text: 'Set',
+                className: 'green',
+                onClick: onSubmit,
+              }),
+            ],
+          }),
+        ],
+      })
+    );
+  }
+
+  function openHelpModal() {
+    Modal.show(
+      Div({
+        className: 'modal-content',
+        children: [
+          Header({ text: 'Editor Instructions', lvl: 2 }),
+          Paragraph({
+            text: 'Use the editor to create and save your own custom maze levels. You can add walls, set the board size, and save your creation for later play.',
+          }),
+          Header({ text: 'Controls', lvl: 2 }),
+          Paragraph({
+            text: '<b>LMB click</b> — add right (vertical) wall',
+          }),
+          Paragraph({
+            text: '<b>Shift + LMB</b> — add bottom (horizontal) wall',
+          }),
+          Paragraph({
+            text: 'Add a name (3-20 characters) and click <b>Save</b> to store the level',
+          }),
+          Paragraph({
+            text: '<b>Reset</b> button — reset board to initial state',
+          }),
+          Paragraph({
+            text: '<b>Clear</b> button — clear all walls on the board',
+          }),
+          Paragraph({
+            text: '<b>Show seed</b> button — edit board via text representation (Do it with caution!)',
+          }),
+        ],
+      })
+    );
+  }
 
   app.append(
     Div({
@@ -247,69 +312,48 @@ function openEditor(level, idx) {
         Span({
           text: 'Width:',
         }),
-        Input({
-          type: 'number',
-          value: decodedLevel.boardWidth,
-          min: LEVEL_SIZE.MIN_WIDTH,
-          max: LEVEL_SIZE.MAX_WIDTH,
-          onChange: onChangeWidth,
-        }),
+        widthInput,
         Span({
           text: 'Height:',
         }),
-        Input({
-          type: 'number',
-          value: decodedLevel.boardHeight,
-          min: LEVEL_SIZE.MIN_HEIGHT,
-          max: LEVEL_SIZE.MAX_HEIGHT,
-          onChange: onChangeHeight,
-        }),
+        heightInput,
         Button({
           text: '?',
           className: 'grey help-btn',
-          onClick: () =>
-            Modal.show(
-              Div({
-                className: 'modal-content',
-                children: [
-                  Header({ text: 'Editor Instructions', lvl: 2 }),
-                  Paragraph({
-                    text: 'Use the editor to create and save your own custom maze levels. You can add walls, set the board size, and save your creation for later play.',
-                  }),
-                  Header({ text: 'Controls', lvl: 2 }),
-                  Paragraph({
-                    text: '<b>LMB click</b> — add right (vertical) wall',
-                  }),
-                  Paragraph({
-                    text: '<b>Shift + LMB</b> — add bottom (horizontal) wall',
-                  }),
-                  Paragraph({
-                    text: 'Add a name (3-20 characters) and click <b>Save</b> to store the level',
-                  }),
-                  Paragraph({
-                    text: '<b>Reset</b> button — reset board to initial state',
-                  }),
-                  Paragraph({
-                    text: '<b>Clear</b> button — clear all walls on the board',
-                  }),
-                  Paragraph({
-                    text: '<b>Show seed</b> button — show board text representation',
-                  }),
-                ],
-              })
-            ),
+          onClick: openHelpModal,
         }),
       ],
     }),
     info,
     board,
-    buttons
+    Div({
+      className: 'row',
+      children: [
+        saveBtn,
+        Button({
+          text: 'Menu',
+          onClick: () => navTo(),
+        }),
+        Button({
+          text: 'Reset',
+          onClick: () => location.reload(),
+        }),
+        Button({
+          text: 'Clear',
+          onClick: onClickClearBoard,
+        }),
+        Button({
+          text: 'Show seed',
+          className: 'orange',
+          onClick: openSeedModal,
+        }),
+      ],
+    })
   );
 
   board.addEventListener('click', onBoardClick);
 }
 
-// todo: edit show seed to enter seed in editor
 export default function (params) {
   const id = params.get('id');
   if (!id) {
@@ -317,7 +361,7 @@ export default function (params) {
     return;
   }
 
-  const level = getLevel(id);
+  const level = parseLevelDataFromQuery(id);
   if (!level) {
     openEditor();
     return;

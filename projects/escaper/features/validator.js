@@ -1,3 +1,15 @@
+import { CUSTOM_LEVEL_NAME, LEVEL_SIZE } from '../constants/index.js';
+import { getWallCount } from '../utils/helpers.js';
+import { getLevelArrayFromString } from './maze.js';
+
+/** Check if a board configuration is solvable using BFS
+ *
+ * @param {Object} param0
+ * @param {number} param0.boardWidth
+ * @param {number} param0.boardHeight
+ * @param {Array<Array<[boolean, boolean]>>} param0.boardConfig - 2D array of cells, each cell is [hasRightWall, hasBottomWall]
+ * @returns {boolean}
+ */
 export function isSolvable({ boardWidth, boardHeight, boardConfig }) {
   const start = [0, 0]; // [col, row]
   const target = [boardWidth - 1, boardHeight - 1];
@@ -54,4 +66,41 @@ export function isSolvable({ boardWidth, boardHeight, boardConfig }) {
   }
 
   return false;
+}
+
+/** Check level name validity
+ *
+ * @param {String} name
+ * @returns {String|undefined} - error message or undefined if valid
+ */
+export function checkLevelName(name) {
+  if (!name) {
+    return 'Please enter a level name';
+  }
+  if (name.length < CUSTOM_LEVEL_NAME.MIN_LENGTH) {
+    return `Level name must be at least ${CUSTOM_LEVEL_NAME.MIN_LENGTH} characters long`;
+  }
+  if (name.length > CUSTOM_LEVEL_NAME.MAX_LENGTH) {
+    return `Level name must be at most ${CUSTOM_LEVEL_NAME.MAX_LENGTH} characters long`;
+  }
+}
+
+/** Validate level seed format
+ *
+ * @param {String} seed - "width,height,walls..." walls is a string of 0s and 1s, not separated by commas
+ * @returns {boolean}
+ */
+export function validateLevelSeed(seed) {
+  if (!seed || typeof seed !== 'string' || !/^\d+,\d+,[01]+$/.test(seed)) {
+    return false;
+  }
+  const [w, h, ...walls] = getLevelArrayFromString(seed);
+  if (w < LEVEL_SIZE.MIN_WIDTH || w > LEVEL_SIZE.MAX_WIDTH) {
+    return false;
+  }
+  if (h < LEVEL_SIZE.MIN_HEIGHT || h > LEVEL_SIZE.MAX_HEIGHT) {
+    return false;
+  }
+  if (getWallCount(w, h) !== walls.length) return false;
+  return true;
 }
