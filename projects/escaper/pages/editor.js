@@ -67,7 +67,6 @@ function openEditor(level, idx) {
     onChange: onChangeHeight,
   });
   const info = Div({
-    className: 'info',
     style: { color: 'var(--green)' },
     text: EDITOR_INFO_MESSAGE.SOLVABLE,
   });

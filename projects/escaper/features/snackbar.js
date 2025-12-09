@@ -5,7 +5,7 @@ class Snackbar {
     this.timer = null;
     this.component = null;
     this.messages = [];
-    this.TIME_TO_HIDE = 3000 * 1000;
+    this.TIME_TO_HIDE = 3 * 1000;
   }
 
   _startTimer() {

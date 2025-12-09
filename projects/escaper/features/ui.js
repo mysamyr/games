@@ -1,4 +1,4 @@
-import { CONFETTI_PIECE_COUNT } from '../constants/index.js';
+import { DEFAULT_CONFETTI_PIECE_COUNT } from '../constants/index.js';
 import { Div } from '../components';
 
 const app = document.getElementById('app');
@@ -29,47 +29,69 @@ export function getBoard(compact) {
   return board;
 }
 
-// todo: fix meeting player and goal
 export function markPlayer(board, y, x) {
-  let player = board.querySelector('.player');
-  const isInit = !player;
-  if (!player) {
-    player = Div({ className: 'player' });
-  }
+  const player = board.querySelector('.player');
   const cell = board.querySelector(`.cell[data-r='${y}'][data-c='${x}']`);
 
-  const startPos = player.getBoundingClientRect();
-  cell.appendChild(player);
-  if (isInit) return;
-  const endPos = player.getBoundingClientRect();
+  const endPos = cell.getBoundingClientRect();
+  const left =
+    endPos.left +
+    (endPos.right - endPos.left) / 2 -
+    (player?.width || 18) / 2 -
+    3 / 2;
+  const top =
+    endPos.top +
+    (endPos.bottom - endPos.top) / 2 -
+    (player?.height || 18) / 2 -
+    3 / 2;
 
-  const dx = startPos.left - endPos.left;
-  const dy = startPos.top - endPos.top;
+  if (!player) {
+    board.appendChild(
+      Div({
+        className: 'player',
+        style: {
+          left: `${left}px`,
+          top: `${top}px`,
+        },
+      })
+    );
+    return;
+  }
 
-  player.style.transition = 'none';
-  player.style.transform = `translate(${dx}px, ${dy}px)`;
-
-  requestAnimationFrame(() =>
-    requestAnimationFrame(() => {
-      player.style.transition = 'transform 420ms cubic-bezier(.2,.8,.2,1)';
-      player.style.transform = 'translate(0, 0)';
-    })
-  );
-}
-
-export function clearMarkers(board) {
-  const goal = board.querySelector('.goal');
-  goal.remove();
+  player.style.left = `${left}px`;
+  player.style.top = `${top}px`;
 }
 
 export function markGoal(board, y, x) {
-  const goal = board.querySelector('.goal') || Div({ className: 'goal' });
+  const goal = board.querySelector('.goal');
   const cell = board.querySelector(`.cell[data-r='${y}'][data-c='${x}']`);
-  cell.appendChild(goal);
+
+  const endPos = cell.getBoundingClientRect();
+  const left =
+    endPos.left +
+    (endPos.right - endPos.left) / 2 -
+    (goal?.width || 14) / 2 -
+    3 / 2;
+  const top =
+    endPos.top +
+    (endPos.bottom - endPos.top) / 2 -
+    (goal?.height || 14) / 2 -
+    3 / 2;
+
+  if (!goal) {
+    board.appendChild(
+      Div({
+        className: 'goal',
+        style: {
+          left: `${left}px`,
+          top: `${top}px`,
+        },
+      })
+    );
+  }
 }
 
 export function clearWinAnimation(boardEl, statusEl, confettiEls) {
-  boardEl.classList.remove('escaper-win');
   if (statusEl) statusEl.classList.remove('escaper-win');
   const confetti =
     confettiEls || document.querySelectorAll('.escaper-confetti');
@@ -77,7 +99,7 @@ export function clearWinAnimation(boardEl, statusEl, confettiEls) {
 }
 
 function createConfettiPieces(
-  count = CONFETTI_PIECE_COUNT,
+  count = DEFAULT_CONFETTI_PIECE_COUNT,
   minMs = 5000,
   maxMs = 10000
 ) {
@@ -87,7 +109,7 @@ function createConfettiPieces(
   const globalTop = rect.top + window.scrollY;
   for (let i = 0; i < count; i++) {
     const duration = Math.round(Math.random() * (maxMs - minMs) + minMs);
-    const delay = Math.round(Math.random() * 500);
+    const delay = Math.round(Math.random() * 2000);
     const left = globalLeft + Math.random() * rect.width;
     // start slightly above the board so pieces visibly fall down it
     const startTop = globalTop - Math.round(Math.random() * 40 + 30);
@@ -112,11 +134,12 @@ function createConfettiPieces(
   return pieces;
 }
 
-export function playWinAnimation(boardEl, statusEl) {
-  boardEl.classList.add('escaper-win');
+export function playWinAnimation(boardEl, statusEl, isLast) {
   statusEl.classList.add('escaper-win');
 
-  const confetti = createConfettiPieces();
+  const confetti = createConfettiPieces(
+    isLast ? DEFAULT_CONFETTI_PIECE_COUNT * 3 : DEFAULT_CONFETTI_PIECE_COUNT
+  );
   confetti.forEach(c => {
     app.appendChild(c);
   });

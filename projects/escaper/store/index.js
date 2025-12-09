@@ -58,10 +58,12 @@ export function listAllLevels() {
       g, // grid: integer[]
       c: !!progress[idx], // completed: boolean
     })),
-    custom: loadCustom().map(lvl => ({
-      n: lvl.n,
-      g: getLevelArrayFromString(lvl.g),
-    })),
+    custom: loadCustom()
+      .sort((a, b) => a.n.localeCompare(b.n))
+      .map(lvl => ({
+        n: lvl.n,
+        g: getLevelArrayFromString(lvl.g),
+      })),
   };
 }
 

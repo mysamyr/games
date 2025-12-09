@@ -1,7 +1,6 @@
 import { Button, Div, Header, Paragraph } from '../components/index.js';
 import { decodeLevel, getLevelName } from '../features/maze.js';
 import {
-  clearMarkers,
   clearWinAnimation,
   getBoard,
   markGoal,
@@ -33,6 +32,7 @@ function startGame({ level, idx, kind }) {
   const status = Paragraph({
     className: 'info',
   });
+  const isLastLevel = kind === LEVEL_TYPE.PREDEFINED && !hasNextLevel(idx);
 
   function detachListeners() {
     window.removeEventListener('keydown', keyHandler);
@@ -102,13 +102,12 @@ function startGame({ level, idx, kind }) {
   }
 
   function onWin() {
-    clearMarkers(board);
     status.textContent =
       kind === LEVEL_TYPE.PREDEFINED && !hasNextLevel(idx)
         ? GAME_STATUS_MESSAGE.ESCAPED_LAST
         : GAME_STATUS_MESSAGE.ESCAPED;
     detachListeners();
-    playWinAnimation(board, status);
+    playWinAnimation(board, status, isLastLevel);
     unlockNextLevel();
   }
 
@@ -175,7 +174,7 @@ function startGame({ level, idx, kind }) {
           })
         );
       }
-      if (hasNextLevel(idx)) {
+      if (!isLastLevel) {
         navigationButtons.appendChild(
           Button({
             id: 'next-level-btn',
@@ -194,6 +193,7 @@ function startGame({ level, idx, kind }) {
 
   app.append(
     Header({
+      lvl: 1,
       text: `Level: ${getLevelName(level)}`,
     }),
     status,

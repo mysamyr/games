@@ -94,5 +94,4 @@ Example of pre-defined mazes:
 ## TODOs
 
 - add music
-- add animation on move
-- mark player position in editor
+- add configuration btns

@@ -40,12 +40,44 @@ const onDeleteLevel = idx => {
   );
 };
 
+const onClearProgress = () => {
+  const onConfirm = () => {
+    clearProgress();
+    location.reload();
+  };
+  Modal.show(
+    Div({
+      className: 'modal-content',
+      children: [
+        Header({
+          lvl: 3,
+          text: 'Are you sure you want to clear ALL progress?',
+        }),
+        Div({
+          className: 'modal-buttons',
+          children: [
+            Button({
+              text: 'Cancel',
+              onClick: () => Modal.hide(),
+            }),
+            Button({
+              className: 'red',
+              text: 'Delete',
+              onClick: onConfirm,
+            }),
+          ],
+        }),
+      ],
+    })
+  );
+};
+
 const makePredefinedSection = lvls =>
   Div({
     className: 'column',
     children: [
       Header({
-        lvl: 3,
+        lvl: 2,
         text: 'Default levels:',
       }),
       Div({
@@ -100,7 +132,7 @@ const makeCustomSection = lvls => {
     className: 'column',
     children: [
       Header({
-        lvl: 3,
+        lvl: 2,
         text: 'Custom levels:',
       }),
       Div({
@@ -133,11 +165,7 @@ export default function () {
         Button({
           className: 'red',
           text: 'Clear current progress',
-          onClick: () => {
-            // todo: do use modal
-            clearProgress();
-            location.reload();
-          },
+          onClick: onClearProgress,
         }),
       ],
     })

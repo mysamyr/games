@@ -36,7 +36,7 @@ export const CUSTOM_LEVEL_NAME = {
   MIN_LENGTH: 3,
 };
 
-export const CONFETTI_PIECE_COUNT = 30;
+export const DEFAULT_CONFETTI_PIECE_COUNT = 30;
 
 export const STORAGE_LEVELS_KEY = 'escaper:levels:v1';
 export const STORAGE_PROGRESS_KEY = 'escaper:progress:v1';
