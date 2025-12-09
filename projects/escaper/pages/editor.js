@@ -29,7 +29,7 @@ import Snackbar from '../features/snackbar.js';
 import { getBoard } from '../features/ui.js';
 import { saveCustomLevel, updateCustomLevel } from '../store/index.js';
 import { navTo } from '../utils/navigation.js';
-import { parseLevelDataFromQuery } from '../utils/helpers.js';
+import { parseLevelDataFromId } from '../utils/helpers.js';
 
 const app = document.getElementById('app');
 
@@ -122,7 +122,7 @@ function openEditor(level, idx) {
       saveCustomLevel(nameInput.value, lvl);
       Snackbar.displayMsg(`Saved level '${nameInput.value}'`);
     } catch (e) {
-      Snackbar.displayMsg(e.message);
+      Snackbar.displayErr(e.message);
     }
   }
 
@@ -131,18 +131,19 @@ function openEditor(level, idx) {
       updateCustomLevel(idx, nameInput.value, lvl);
       Snackbar.displayMsg(`Updated level '${nameInput.value}'`);
     } catch (e) {
-      Snackbar.displayMsg(e.message);
+      Snackbar.displayErr(e.message);
     }
   }
 
   function onLevelSave() {
     const nameErrorMsg = checkLevelName(nameInput.value);
     if (nameErrorMsg) {
-      Snackbar.displayMsg(nameErrorMsg);
+      Snackbar.displayErr(nameErrorMsg);
+      nameInput.focus();
       return;
     }
     if (!isSolvable(decodedLevel)) {
-      Snackbar.displayMsg('Level is unsolvable');
+      Snackbar.displayErr('Level is unsolvable');
       return;
     }
     const encodedLevel = encodeLevel(decodedLevel);
@@ -224,8 +225,7 @@ function openEditor(level, idx) {
   function openSeedModal() {
     const seedInput = Input({
       type: 'text',
-      value: getLevelString(encodeLevel(decodedLevel)), // todo issue here !!!!
-      style: { width: '100%' },
+      value: getLevelString(encodeLevel(decodedLevel)),
     });
     const onSubmit = () => {
       const { boardWidth, boardHeight, boardConfig } = decodeLevel(
@@ -361,7 +361,7 @@ export default function (params) {
     return;
   }
 
-  const level = parseLevelDataFromQuery(id);
+  const level = parseLevelDataFromId(id);
   if (!level) {
     openEditor();
     return;

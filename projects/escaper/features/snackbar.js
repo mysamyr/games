@@ -5,7 +5,7 @@ class Snackbar {
     this.timer = null;
     this.component = null;
     this.messages = [];
-    this.TIME_TO_HIDE = 3 * 1000;
+    this.TIME_TO_HIDE = 3000 * 1000;
   }
 
   _startTimer() {
@@ -17,9 +17,9 @@ class Snackbar {
     this.timer = null;
   }
 
-  _showMessage(msg) {
+  _showMessage(msg, options = {}) {
     const component = Div({
-      className: 'snackbar-container',
+      className: `snackbar-container ${options.error ? 'red' : 'grey'}`,
       children: [
         Div({
           className: 'snackbar-label',
@@ -50,14 +50,22 @@ class Snackbar {
     this._clearTimer();
 
     if (this.messages.length) {
-      this._showMessage(this.messages[0]);
+      const msg = this.messages[0];
+      this._showMessage(msg.msg, { error: !!msg.error });
     }
   }
 
   displayMsg(msg) {
-    this.messages.push(msg);
+    this.messages.push({ msg });
     if (!this.component) {
       this._showMessage(msg);
+    }
+  }
+
+  displayErr(errorMsg) {
+    this.messages.push({ msg: errorMsg, error: true });
+    if (!this.component) {
+      this._showMessage(errorMsg, { error: true });
     }
   }
 }

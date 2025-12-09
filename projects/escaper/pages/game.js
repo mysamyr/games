@@ -14,7 +14,7 @@ import {
   isPrevLevelCompleted,
   markLevelCompleted,
 } from '../store/index.js';
-import { parseLevelDataFromQuery } from '../utils/helpers.js';
+import { parseLevelDataFromId } from '../utils/helpers.js';
 import Snackbar from '../features/snackbar.js';
 
 const app = document.getElementById('app');
@@ -208,7 +208,7 @@ export default function (params) {
     return;
   }
 
-  const level = parseLevelDataFromQuery(id);
+  const level = parseLevelDataFromId(id);
   if (!level) {
     app.append(
       Div({

@@ -89,3 +89,8 @@ Example of pre-defined mazes:
 - Display a message if the maze is invalid and prevent saving.
 - After saving, return to main menu and display the new maze in the user-created mazes list.
 - Option to delete user-created mazes from local storage.
+
+## TODOs
+
+- add music
+- add animation on move

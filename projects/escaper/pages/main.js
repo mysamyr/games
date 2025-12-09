@@ -38,13 +38,14 @@ const onDeleteLevel = idx => {
 
 const makePredefinedSection = lvls =>
   Div({
+    className: 'column',
     children: [
       Header({
         lvl: 3,
         text: 'Default levels:',
       }),
       Div({
-        className: 'default-level-section',
+        className: 'levels-section grid',
         children: lvls.map((lvl, idx) =>
           Button({
             text: `Level ${getLevelName(lvl)}`,
@@ -92,13 +93,14 @@ const makeCustomSection = lvls => {
       )
     : [Span({ text: 'No custom levels created yet.' })];
   return Div({
+    className: 'column',
     children: [
       Header({
         lvl: 3,
         text: 'Custom levels:',
       }),
       Div({
-        className: 'custom-level-section',
+        className: 'levels-section',
         children: levelsSection,
       }),
     ],
@@ -118,6 +120,7 @@ export default function () {
       children: [makePredefinedSection(predefined), makeCustomSection(custom)],
     }),
     Div({
+      className: 'row',
       children: [
         Button({
           text: 'Create custom maze',

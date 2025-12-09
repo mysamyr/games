@@ -8,7 +8,7 @@ export const isNil = value => value == null; // null or undefined
  * @param {string} id - The level identifier in the format "kind-idx"
  * @returns {{idx: Number, kind: String, level: {n: String, g: Number[], c: Boolean}}|null} An object containing idx, kind, and level data, or null if invalid
  */
-export const parseLevelDataFromQuery = id => {
+export const parseLevelDataFromId = id => {
   if (isNil(id)) return null;
   const [kind, idxStr] = id.split('-');
   const idx = parseInt(idxStr, 10);

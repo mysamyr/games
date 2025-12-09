@@ -3,13 +3,16 @@ import {
   STORAGE_PROGRESS_KEY,
 } from '../constants/index.js';
 import { getWallCount } from '../utils/helpers.js';
+import { getLevelArrayFromString, getLevelString } from '../features/maze.js';
 
 const predefined = [
-  [2, 2, 0, 1, 1, 0],
-  [2, 2, 1, 0, 0, 1],
-  [3, 2, 0, 1, 1, 0, 1, 0, 1],
-  [3, 3, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0],
-  [3, 3, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1],
+  '2,2,0110',
+  '3,2,0110101',
+  '3,3,000000101101',
+  '4,5,1000100101000000100010110110101',
+  '7,6,10000001010101101011111110100000010001000010011000110100100100010101011',
+  '8,9,1000101010101001101011101100001100110110011011001110010110000100010000001001000100001011010000111001010000011100101010100100000',
+  '8,9,1000001010101101101001111110101000100110001101000111010000010000110010001001000100001011010001010011010000011110101111100100101',
 ];
 
 function loadCustom() {
@@ -50,12 +53,15 @@ function checkLevel(name, grid) {
 export function listAllLevels() {
   const progress = loadProgress();
   return {
-    predefined: predefined.map((g, idx) => ({
+    predefined: predefined.map(getLevelArrayFromString).map((g, idx) => ({
       n: String(idx + 1), // name: string
       g, // grid: integer[]
       c: !!progress[idx], // completed: boolean
     })),
-    custom: loadCustom(),
+    custom: loadCustom().map(lvl => ({
+      n: lvl.n,
+      g: getLevelArrayFromString(lvl.g),
+    })),
   };
 }
 
@@ -65,7 +71,7 @@ export function saveCustomLevel(name, grid) {
     throw new Error('Invalid level data');
   }
   const arr = loadCustom();
-  arr.push({ n: name, g: grid });
+  arr.push({ n: name, g: getLevelString(grid) });
   saveCustom(arr);
 }
 
@@ -75,7 +81,7 @@ export function updateCustomLevel(idx, name, grid) {
     throw new Error('Invalid level data');
   }
   const arr = loadCustom();
-  arr[idx] = { n: name, g: grid };
+  arr[idx] = { n: name, g: getLevelString(grid) };
   saveCustom(arr);
 }
 
