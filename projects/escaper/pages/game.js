@@ -1,8 +1,10 @@
 import { Button, Div, Header, Paragraph } from '../components/index.js';
 import { decodeLevel, getLevelName } from '../features/maze.js';
 import {
+  clearMarkers,
   clearWinAnimation,
   getBoard,
+  markGoal,
   markPlayer,
   playWinAnimation,
 } from '../features/ui.js';
@@ -100,6 +102,7 @@ function startGame({ level, idx, kind }) {
   }
 
   function onWin() {
+    clearMarkers(board);
     status.textContent =
       kind === LEVEL_TYPE.PREDEFINED && !hasNextLevel(idx)
         ? GAME_STATUS_MESSAGE.ESCAPED_LAST
@@ -122,6 +125,7 @@ function startGame({ level, idx, kind }) {
   function onRestart() {
     player = { x: 0, y: 0 };
     markPlayer(board, 0, 0);
+    markGoal(board, decodedLevel.boardHeight - 1, decodedLevel.boardWidth - 1);
     status.textContent = '';
     clearWinAnimation(board, status);
     // reattach in case it was removed on win
@@ -198,6 +202,7 @@ function startGame({ level, idx, kind }) {
   );
 
   markPlayer(board, 0, 0);
+  markGoal(board, decodedLevel.boardHeight - 1, decodedLevel.boardWidth - 1);
   attachListeners();
 }
 

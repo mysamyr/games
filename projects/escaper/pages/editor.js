@@ -26,7 +26,7 @@ import {
 } from '../features/validator.js';
 import Modal from '../features/modal.js';
 import Snackbar from '../features/snackbar.js';
-import { getBoard } from '../features/ui.js';
+import { getBoard, markGoal, markPlayer } from '../features/ui.js';
 import { saveCustomLevel, updateCustomLevel } from '../store/index.js';
 import { navTo } from '../utils/navigation.js';
 import { parseLevelDataFromId } from '../utils/helpers.js';
@@ -159,6 +159,8 @@ function openEditor(level, idx) {
     const newBoard = getBoard(decodedLevel);
     board.replaceWith(newBoard);
     board = newBoard;
+    markPlayer(board, 0, 0);
+    markGoal(board, decodedLevel.boardHeight - 1, decodedLevel.boardWidth - 1);
     board.addEventListener('click', onBoardClick);
     checkSolvability();
   }
@@ -351,6 +353,8 @@ function openEditor(level, idx) {
     })
   );
 
+  markPlayer(board, 0, 0);
+  markGoal(board, decodedLevel.boardHeight - 1, decodedLevel.boardWidth - 1);
   board.addEventListener('click', onBoardClick);
 }
 

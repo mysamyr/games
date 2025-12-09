@@ -1,6 +1,10 @@
 import { navTo } from '../utils/navigation.js';
 import { LEVEL_TYPE, PATH } from '../constants/index.js';
-import { deleteCustomLevel, listAllLevels } from '../store/index.js';
+import {
+  clearProgress,
+  deleteCustomLevel,
+  listAllLevels,
+} from '../store/index.js';
 import { Button, Div, Header, Span } from '../components/index.js';
 import { getLevelName, getLevelSize } from '../features/maze.js';
 import Modal from '../features/modal.js';
@@ -125,6 +129,15 @@ export default function () {
         Button({
           text: 'Create custom maze',
           onClick: () => navTo(PATH.EDITOR),
+        }),
+        Button({
+          className: 'red',
+          text: 'Clear current progress',
+          onClick: () => {
+            // todo: do use modal
+            clearProgress();
+            location.reload();
+          },
         }),
       ],
     })

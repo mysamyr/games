@@ -110,3 +110,7 @@ export function markLevelCompleted(idx) {
   progress[idx] = true;
   saveProgress(progress);
 }
+
+export function clearProgress() {
+  localStorage.setItem(STORAGE_PROGRESS_KEY, JSON.stringify([]));
+}

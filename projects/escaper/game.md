@@ -1,10 +1,12 @@
 # Escaper game
 
-Escaper is a 2d board game where player has to escape from a maze. The maze is represented as a grid of calls, tiled with walls.
+Escaper is a 2d board game where player has to escape from a maze. The maze is represented as a grid of calls, tiled
+with walls.
 
 The player can move in four directions: up, down, left, and right. The goal is to reach the exit point of the maze.
 
-Enter is always in the top-left corner (0, 0) and exit is always in the bottom-right corner (n-1, m-1) where n is the number of rows and m is the number of columns in the maze.
+Enter is always in the top-left corner (0, 0) and exit is always in the bottom-right corner (n-1, m-1) where n is the
+number of rows and m is the number of columns in the maze.
 
 ## Main page should contain:
 
@@ -34,8 +36,10 @@ Enter is always in the top-left corner (0, 0) and exit is always in the bottom-r
 
 ## Maze representation:
 
-Mazes are stored in local storage as a JSON array of objects, each object containing the maze name and its board configuration.
-Board configuration is a flat array of numbers. First 2 numbers represent the number of rows and columns respectively. The rest of the numbers (1 - active wall, 0 - no wall) represent the walls in following order:
+Mazes are stored in local storage as a JSON array of objects, each object containing the maze name and its board
+configuration.
+Board configuration is a flat array of numbers. First 2 numbers represent the number of rows and columns respectively.
+The rest of the numbers (1 - active wall, 0 - no wall) represent the walls in following order:
 
 - first vertical walls left-right, up-down.
 - then horizontal walls up-down, left-right.
@@ -56,11 +60,7 @@ Pre-defined mazes are hardcoded in the application as an array of such objects.
 Example of pre-defined mazes:
 
 ```json
-[
-  { "n": "Easy Maze 1", "g": [2, 2, 0, 1, 1, 0] },
-  { "n": "Medium Maze 1", "g": [3, 3, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0] },
-  { "n": "Hard Maze 1", "g": [4, 4, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1] }
-]
+["2,2,0110", "3,4,0101101010"]
 ```
 
 ## Menu logic:
@@ -70,7 +70,8 @@ Example of pre-defined mazes:
 - User can navigate to maze editor to create a new maze.
 - User can delete user-created mazes from local storage using 'x' button near it.
 - Option to go back to main menu from game and editor pages.
-- Lvl link is technically a div with data attribute containing char ('i' for pre-defined or 'c' for custom) and number (index of a level in array).
+- Lvl link is technically a div with data attribute containing char ('i' for pre-defined or 'c' for custom) and number (
+  index of a level in array).
 
 ## Game logic:
 
@@ -94,3 +95,4 @@ Example of pre-defined mazes:
 
 - add music
 - add animation on move
+- mark player position in editor

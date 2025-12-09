@@ -64,7 +64,7 @@ input[type='number'] {
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
   align-items: center;
 }
 
@@ -119,7 +119,9 @@ input[type='number'] {
   height: 40px;
   border-right: 3px solid var(--white);
   border-bottom: 3px solid var(--white);
-  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .cell.wall-right {
@@ -130,45 +132,28 @@ input[type='number'] {
   border-bottom-color: var(--black);
 }
 
-.cell.player {
-  background: transparent;
-}
-
-.cell.player::before {
-  content: '';
-  position: absolute;
+.player {
   width: 18px;
   height: 18px;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
   border-radius: 50%;
   background: radial-gradient(circle at 30% 30%, var(--yellow), var(--orange));
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
   pointer-events: none;
-  z-index: 1;
+  /*transition: transform 420ms cubic-bezier(.2, .8, .2, 1);*/
+  will-change: transform;
 }
 
-.cell.goal {
-  background: transparent;
-}
-
-.cell.goal::before {
-  content: '';
-  position: absolute;
+.goal {
   width: 14px;
   height: 14px;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
   background: var(--green);
   border-radius: 3px;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
   pointer-events: none;
-  z-index: 1;
 }
 
 /* GAME PAGE */
+
 .column {
   display: flex;
   flex-direction: column;
@@ -189,6 +174,7 @@ input[type='number'] {
 }
 
 /* Win pulse/glow */
+
 .escaper-win {
   animation: escaper-pulse 900ms ease-in-out 1;
   transform-origin: center;
@@ -232,6 +218,7 @@ input[type='number'] {
 }
 
 /* Confetti */
+
 .escaper-confetti {
   position: absolute;
   pointer-events: none;
@@ -256,11 +243,13 @@ input[type='number'] {
 }
 
 /* EDITOR PAGE */
+
 .help-btn {
   border-radius: 50%;
 }
 
 /* SNACKBAR */
+
 .snackbar-container {
   position: fixed;
   bottom: 5%;
@@ -286,6 +275,7 @@ input[type='number'] {
 }
 
 /* MODAL DIALOG */
+
 dialog:modal {
   margin: auto;
   color: var(--black);
@@ -314,6 +304,7 @@ dialog::backdrop {
 }
 
 /* COLOR CLASSES */
+
 .green {
   background: var(--green);
   color: var(--white);

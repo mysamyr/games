@@ -22,8 +22,6 @@ export function getBoard(compact) {
         cell.classList.add('wall-right');
       if (y < boardHeight - 1 && boardConfig[y][x][1])
         cell.classList.add('wall-down');
-      if (x === boardWidth - 1 && y === boardHeight - 1)
-        cell.classList.add('goal');
       board.appendChild(cell);
     }
   }
@@ -31,11 +29,43 @@ export function getBoard(compact) {
   return board;
 }
 
+// todo: fix meeting player and goal
 export function markPlayer(board, y, x) {
-  const prev = board.querySelector('.player');
-  if (prev) prev.classList.remove('player');
+  let player = board.querySelector('.player');
+  const isInit = !player;
+  if (!player) {
+    player = Div({ className: 'player' });
+  }
   const cell = board.querySelector(`.cell[data-r='${y}'][data-c='${x}']`);
-  if (cell) cell.classList.add('player');
+
+  const startPos = player.getBoundingClientRect();
+  cell.appendChild(player);
+  if (isInit) return;
+  const endPos = player.getBoundingClientRect();
+
+  const dx = startPos.left - endPos.left;
+  const dy = startPos.top - endPos.top;
+
+  player.style.transition = 'none';
+  player.style.transform = `translate(${dx}px, ${dy}px)`;
+
+  requestAnimationFrame(() =>
+    requestAnimationFrame(() => {
+      player.style.transition = 'transform 420ms cubic-bezier(.2,.8,.2,1)';
+      player.style.transform = 'translate(0, 0)';
+    })
+  );
+}
+
+export function clearMarkers(board) {
+  const goal = board.querySelector('.goal');
+  goal.remove();
+}
+
+export function markGoal(board, y, x) {
+  const goal = board.querySelector('.goal') || Div({ className: 'goal' });
+  const cell = board.querySelector(`.cell[data-r='${y}'][data-c='${x}']`);
+  cell.appendChild(goal);
 }
 
 export function clearWinAnimation(boardEl, statusEl, confettiEls) {
