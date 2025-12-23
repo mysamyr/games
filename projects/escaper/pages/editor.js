@@ -30,6 +30,7 @@ import { getBoard, markGoal, markPlayer } from '../features/ui.js';
 import { saveCustomLevel, updateCustomLevel } from '../store/index.js';
 import { navTo } from '../utils/navigation.js';
 import { parseLevelDataFromId } from '../utils/helpers.js';
+import { removeSwipeEvent } from '../features/touch-events.js';
 
 const app = document.getElementById('app');
 
@@ -75,6 +76,29 @@ function openEditor(level, idx) {
     className: 'green',
     onClick: onLevelSave,
   });
+
+  function detachListeners() {
+    window.removeEventListener('keydown', keyHandler);
+    window.removeEventListener('popstate', onPopState);
+    removeSwipeEvent();
+  }
+
+  function attachListeners() {
+    window.addEventListener('keydown', keyHandler);
+    window.addEventListener('popstate', onPopState);
+    board.addEventListener('click', onBoardClick);
+  }
+
+  function onPopState() {
+    detachListeners();
+  }
+
+  function keyHandler(e) {
+    if (nameInput === document.activeElement) return;
+    if (e.key === 'm') onClickMenu();
+    if (e.key === 'r') location.reload();
+    if (e.key === 'c') onClickClearBoard();
+  }
 
   function addRightWall({ column, row, cell }) {
     if (row < decodedLevel.boardWidth - 1) {
@@ -160,8 +184,13 @@ function openEditor(level, idx) {
     board = newBoard;
     markPlayer(board, 0, 0);
     markGoal(board, decodedLevel.boardHeight - 1, decodedLevel.boardWidth - 1);
-    board.addEventListener('click', onBoardClick);
+    attachListeners();
     checkSolvability();
+  }
+
+  function onClickMenu() {
+    detachListeners();
+    navTo();
   }
 
   function onChangeWidth(e) {
@@ -333,7 +362,7 @@ function openEditor(level, idx) {
         saveBtn,
         Button({
           text: 'Menu',
-          onClick: () => navTo(),
+          onClick: onClickMenu,
         }),
         Button({
           text: 'Reset',
@@ -354,7 +383,7 @@ function openEditor(level, idx) {
 
   markPlayer(board, 0, 0);
   markGoal(board, decodedLevel.boardHeight - 1, decodedLevel.boardWidth - 1);
-  board.addEventListener('click', onBoardClick);
+  attachListeners();
 }
 
 export default function (params) {

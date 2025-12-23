@@ -100,29 +100,39 @@ const makeCustomSection = lvls => {
         Div({
           className: 'level-item',
           children: [
-            Span({
-              className: 'bold',
-              text: getLevelName(lvl),
+            Div({
+              className: 'row',
+              children: [
+                Span({
+                  className: 'bold',
+                  text: getLevelName(lvl),
+                }),
+                Span({
+                  text: getLevelSize(lvl).join(' x '),
+                }),
+              ],
             }),
-            Span({
-              text: getLevelSize(lvl).join(' x '),
-            }),
-            Button({
-              text: 'Play',
-              onClick: () =>
-                navTo(`${PATH.GAME}?id=${LEVEL_TYPE.CUSTOM}-${idx}`),
-            }),
-            Button({
-              className: 'orange',
-              text: 'Edit',
-              onClick: () =>
-                navTo(`${PATH.EDITOR}?id=${LEVEL_TYPE.CUSTOM}-${idx}`),
-            }),
-            Button({
-              className: 'red',
-              text: '✕',
-              title: 'Delete',
-              onClick: () => onDeleteLevel(idx),
+            Div({
+              className: 'row',
+              children: [
+                Button({
+                  text: 'Play',
+                  onClick: () =>
+                    navTo(`${PATH.GAME}?id=${LEVEL_TYPE.CUSTOM}-${idx}`),
+                }),
+                Button({
+                  className: 'orange',
+                  text: 'Edit',
+                  onClick: () =>
+                    navTo(`${PATH.EDITOR}?id=${LEVEL_TYPE.CUSTOM}-${idx}`),
+                }),
+                Button({
+                  className: 'red',
+                  text: '✕',
+                  title: 'Delete',
+                  onClick: () => onDeleteLevel(idx),
+                }),
+              ],
             }),
           ],
         })

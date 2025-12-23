@@ -17,6 +17,7 @@ import {
 } from '../store/index.js';
 import { parseLevelDataFromId } from '../utils/helpers.js';
 import Snackbar from '../features/snackbar.js';
+import { initSwipeEvent, removeSwipeEvent } from '../features/touch-events.js';
 
 const app = document.getElementById('app');
 
@@ -32,16 +33,25 @@ function startGame({ level, idx, kind }) {
   const status = Paragraph({
     className: 'info',
   });
-  const isLastLevel = kind === LEVEL_TYPE.PREDEFINED && !hasNextLevel(idx);
+  const hasNextLvl = kind === LEVEL_TYPE.PREDEFINED && hasNextLevel(idx);
+  const hasPrevLvl = kind === LEVEL_TYPE.PREDEFINED && hasPrevLevel(idx);
+  const isLvlCompleted = level.c;
 
   function detachListeners() {
     window.removeEventListener('keydown', keyHandler);
     window.removeEventListener('popstate', onPopState);
+    removeSwipeEvent();
   }
 
   function attachListeners() {
     window.addEventListener('keydown', keyHandler);
     window.addEventListener('popstate', onPopState);
+    initSwipeEvent({
+      onSwipeUp: () => move(-1, 0),
+      onSwipeDown: () => move(1, 0),
+      onSwipeRight: () => move(0, 1),
+      onSwipeLeft: () => move(0, -1),
+    });
   }
 
   function onPopState() {
@@ -53,6 +63,10 @@ function startGame({ level, idx, kind }) {
     if (e.key === 'ArrowDown' || e.key === 's') move(1, 0);
     if (e.key === 'ArrowLeft' || e.key === 'a') move(0, -1);
     if (e.key === 'ArrowRight' || e.key === 'd') move(0, 1);
+    if (e.key === 'r') onRestart();
+    if (e.key === 'm') onClickMenu();
+    if (hasPrevLvl && e.key === 'p') onClickPrevLevel();
+    if (hasNextLvl && e.key === 'n') onClickNextLevel();
   }
 
   function canMove(toR, toC) {
@@ -93,7 +107,7 @@ function startGame({ level, idx, kind }) {
   }
 
   function unlockNextLevel() {
-    if (level.c) return; // already completed
+    if (isLvlCompleted) return; // already completed
     markLevelCompleted(idx);
     const nextLevelBtn = document.getElementById('next-level-btn');
     if (nextLevelBtn) {
@@ -107,7 +121,7 @@ function startGame({ level, idx, kind }) {
         ? GAME_STATUS_MESSAGE.ESCAPED_LAST
         : GAME_STATUS_MESSAGE.ESCAPED;
     detachListeners();
-    playWinAnimation(board, status, isLastLevel);
+    playWinAnimation(board, status, !hasNextLvl);
     unlockNextLevel();
   }
 
@@ -165,7 +179,7 @@ function startGame({ level, idx, kind }) {
         className: 'row',
       });
 
-      if (hasPrevLevel(idx)) {
+      if (hasPrevLvl) {
         navigationButtons.appendChild(
           Button({
             className: 'orange',
@@ -174,13 +188,13 @@ function startGame({ level, idx, kind }) {
           })
         );
       }
-      if (!isLastLevel) {
+      if (hasNextLvl) {
         navigationButtons.appendChild(
           Button({
             id: 'next-level-btn',
             className: 'orange',
             text: 'Next Level',
-            disabled: !level.c,
+            disabled: !isLvlCompleted,
             onClick: onClickNextLevel,
           })
         );

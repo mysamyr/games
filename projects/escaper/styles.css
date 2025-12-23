@@ -3,12 +3,14 @@
   --cols: 3;
   --start-rot: 0deg;
   --red: #d32f2f;
-  --bg-color: #f6f8fa;
+  --bg-color: #dbe2e8;
   --white: #fff;
   --black: #111;
   --grey: #777;
   --green: #388e3c;
+  --light-yellow: #fff6be;
   --yellow: #ffd600;
+  --light-green: #fff1e5;
   --orange: #ff8a00;
   --deep-pink: #e52e71;
 }
@@ -40,7 +42,7 @@ h3 {
 
 button {
   cursor: pointer;
-  padding: 8px 16px;
+  padding: 8px 12px;
   border: none;
   border-radius: 6px;
   background: var(--black);
@@ -98,10 +100,11 @@ input[type='number'] {
 }
 
 .level-item {
-  display: flex;
-  gap: 8px;
-  align-items: center;
   padding: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
 }
 
 .grid {
@@ -115,7 +118,7 @@ input[type='number'] {
   width: fit-content;
   display: grid;
   gap: 0;
-  border: 8px solid var(--black);
+  border: 6px solid var(--black);
   background: var(--white);
   grid-template-rows: repeat(var(--rows), 40px);
   grid-template-columns: repeat(var(--cols), 40px);
@@ -124,8 +127,8 @@ input[type='number'] {
 .cell {
   width: 40px;
   height: 40px;
-  border-right: 3px solid var(--white);
-  border-bottom: 3px solid var(--white);
+  border: 1px solid transparent;
+  background: radial-gradient(var(--light-yellow), var(--light-green));
   display: flex;
   justify-content: center;
   align-items: center;
@@ -243,6 +246,7 @@ input[type='number'] {
 /* EDITOR PAGE */
 
 .help-btn {
+  padding: 8px 14px;
   border-radius: 50%;
 }
 
