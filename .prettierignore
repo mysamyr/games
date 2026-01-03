@@ -7,7 +7,7 @@ package-lock.json
 .gitignore
 .prettierignore
 .prettierrc
+default.conf
+Dockerfile
 
 /node_modules
-/projects/*/node_modules
-/projects/*/dist

@@ -14,9 +14,9 @@ export default [
       'node_modules',
       '.husky',
       'assets',
+      'dist',
       '.prettierignore',
       '.prettierrc',
-      'projects/*/dist'
     ],
   },
   ...compat.extends('eslint:recommended', 'prettier'),
