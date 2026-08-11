@@ -197,7 +197,6 @@ function init() {
   });
 
   document.getElementById('leaderboard').addEventListener('click', () => {
-    // eslint-disable-next-line no-console
     console.log(getLeaderboard());
   });
 }

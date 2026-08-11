@@ -1,13 +1,2 @@
-/.idea
-/.vscode
-/.husky
-/assets
+.husky
 package-lock.json
-
-.gitignore
-.prettierignore
-.prettierrc
-default.conf
-Dockerfile
-
-/node_modules

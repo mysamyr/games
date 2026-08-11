@@ -1,14 +1,14 @@
 {
-  "trailingComma": "es5",
+  "arrowParens": "avoid",
+  "bracketSpacing": true,
+  "endOfLine": "lf",
   "printWidth": 80,
+  "quoteProps": "as-needed",
+  "semi": true,
+  "singleQuote": true,
+  "trailingComma": "es5",
   "tabWidth": 2,
   "useTabs": false,
-  "semi": true,
-  "quoteProps": "as-needed",
-  "singleQuote": true,
-  "bracketSpacing": true,
-  "endOfLine": "auto",
-  "arrowParens": "avoid",
 
   "parser": "babel",
   "overrides": [

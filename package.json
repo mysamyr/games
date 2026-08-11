@@ -9,25 +9,21 @@
     "node": ">=22"
   },
   "scripts": {
-    "build": "node esbuild.js",
-    "docker": "docker run -p 80:80 .",
     "format": "prettier --write .",
     "lint": "eslint .",
     "prepare": "husky"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.1",
-    "@eslint/js": "^9.39.1",
-    "esbuild": "^0.27.1",
-    "eslint": "^9.39.1",
+    "@eslint/js": "^9.39.5",
+    "eslint": "^9.39.5",
     "eslint-config-prettier": "^10.1.8",
-    "globals": "^16.5.0",
+    "globals": "^17.6.0",
     "husky": "^9.1.7",
-    "lint-staged": "^16.2.7",
-    "prettier": "^3.6.2"
+    "lint-staged": "^17.0.7",
+    "prettier": "^3.8.4"
   },
   "lint-staged": {
-    "*.{js,json,css,md}": ["npm run format"],
-    "*.js": ["npm run lint"]
+    "*.{js,json,css,md}": ["prettier --write"],
+    "*.js": ["eslint --fix"]
   }
 }

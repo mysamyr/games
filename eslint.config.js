@@ -1,47 +1,24 @@
-import globals from 'globals';
+import { defineConfig } from 'eslint/config';
 import js from '@eslint/js';
-import { FlatCompat } from '@eslint/eslintrc';
+import eslintConfigPrettier from 'eslint-config-prettier';
+import globals from 'globals';
 
-const compat = new FlatCompat({
-  baseDirectory: import.meta.__dirname,
-  recommendedConfig: js.configs.recommended,
-  allConfig: js.configs.all,
-});
-
-export default [
+export default defineConfig(
   {
-    ignores: [
-      'node_modules',
-      '.husky',
-      'assets',
-      'dist',
-      '.prettierignore',
-      '.prettierrc',
-    ],
+    ignores: ['**/node_modules/**', 'assets/**'],
   },
-  ...compat.extends('eslint:recommended', 'prettier'),
   {
+    files: ['**/*.{js}'],
     languageOptions: {
-      globals: {
-        ...globals.node,
-        ...globals.browser,
-      },
-
-      ecmaVersion: 12,
-      sourceType: 'module',
+      globals: globals.browser,
     },
-
+    plugins: {
+      js,
+    },
+    extends: ['js/recommended'],
     rules: {
-      'arrow-body-style': ['warn', 'as-needed'],
-      'no-debugger': 'warn',
-      'no-duplicate-imports': 'error',
-      'no-console': 'warn',
-      'no-undef': 'error',
-      semi: 'error',
-      'semi-spacing': 'error',
-      eqeqeq: 'warn',
-      'object-shorthand': 'error',
-      'no-unused-vars': 'error',
+      'no-console': 'error',
     },
   },
-];
+  eslintConfigPrettier
+);

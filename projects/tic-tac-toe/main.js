@@ -27,6 +27,7 @@ function cellClicked(cellIndex) {
 function updateCell(idx) {
   options[idx] = currentPlayer;
   cells[idx].textContent = currentPlayer;
+  cells[idx].classList.add('disabled');
 }
 
 function changePlayer() {
@@ -65,7 +66,10 @@ function restartGame() {
   currentPlayer = PLAYERS.X;
   options = new Array(9).fill('');
   statusText.textContent = `${currentPlayer}'s turn`;
-  cells.forEach(cell => (cell.textContent = ''));
+  cells.forEach(cell => {
+    cell.textContent = '';
+    cell.classList.remove('disabled');
+  });
   running = true;
 }
 

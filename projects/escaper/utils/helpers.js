@@ -1,7 +1,6 @@
 import { listAllLevels } from '../store/index.js';
 import { LEVEL_TYPE } from '../constants/index.js';
 
-// eslint-disable-next-line eqeqeq
 export const isNil = value => value == null; // null or undefined
 
 /** Parse level data from query parameter string
